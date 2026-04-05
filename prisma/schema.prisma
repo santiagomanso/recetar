@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id             String        @id @default(cuid())
+  name           String
+  email          String        @unique
+  password       String
+  specialty      String?
+  status         UserStatus    @default(PENDING)
+  mpAccessToken  String?
+  mpRefreshToken String?
+  mpUserId       String?
+  config         DoctorConfig?
+  deliveries     Delivery[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@map("users")
+}
+
+model DoctorConfig {
+  id            String   @id @default(cuid())
+  doctorId      String   @unique
+  doctor        User     @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  defaultAmount Decimal? @db.Decimal(10, 2)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("doctor_configs")
+}
+
+model Delivery {
+  id             String          @id @default(cuid())
+  doctorId       String
+  doctor         User            @relation(fields: [doctorId], references: [id], onDelete: Restrict)
+  type           DeliveryType
+  pdfUrl         String
+  pdfKey         String
+  patientPhone   String
+  amount         Decimal         @db.Decimal(10, 2)
+  status         DeliveryStatus  @default(PENDING_PAYMENT)
+  chatbotState   ChatbotState    @default(IDLE)
+  mpPreferenceId String?
+  mpPaymentId    String?
+  createdAt      DateTime        @default(now())
+  paidAt         DateTime?
+  sentAt         DateTime?
+  messages       WhatsAppMessage[]
+
+  @@index([doctorId, status])
+  @@map("deliveries")
+}
+
+model WhatsAppMessage {
+  id          String            @id @default(cuid())
+  deliveryId  String
+  delivery    Delivery          @relation(fields: [deliveryId], references: [id])
+  direction   MessageDirection
+  content     String
+  waMessageId String?
+  createdAt   DateTime          @default(now())
+
+  @@index([deliveryId])
+  @@map("whatsapp_messages")
+}
+
+enum UserStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum DeliveryType {
+  PRESCRIPTION
+  STUDIES
+}
+
+enum DeliveryStatus {
+  PENDING_PAYMENT
+  PAID
+  SENT
+  FAILED
+}
+
+enum ChatbotState {
+  IDLE
+  LINK_SENT
+  PAYMENT_CONFIRMED
+  PDF_SENT
+}
+
+enum MessageDirection {
+  INBOUND
+  OUTBOUND
+}
