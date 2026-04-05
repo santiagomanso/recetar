@@ -16,3 +16,9 @@ node_modules
 .next/
 .DS_Store
 /lib/generated/prisma
+
+# Build cache
+tsconfig.tsbuildinfo
+
+# Superpowers internal server state (ephemeral, not useful in history)
+.superpowers/**/state/
