@@ -1,0 +1,86 @@
+<h2>Arquitectura del Sistema — RecetaMed</h2>
+<p class="subtitle">Flujo completo: del médico al paciente</p>
+
+<div style="display: flex; flex-direction: column; gap: 24px; margin-top: 24px;">
+
+  <!-- Row 1: Actors -->
+  <div style="display: flex; gap: 16px; align-items: stretch;">
+    <div style="flex:1; background: #1e3a5f; border-radius: 12px; padding: 16px; text-align: center; color: white;">
+      <div style="font-size: 28px;">👨‍⚕️</div>
+      <div style="font-weight: 700; font-size: 14px; margin-top: 6px;">MÉDICO</div>
+      <div style="font-size: 11px; opacity: 0.8; margin-top: 4px;">Sube PDF + teléfono + monto</div>
+    </div>
+    <div style="display:flex;align-items:center; font-size:22px; color:#666;">→</div>
+    <div style="flex:2; background: #1e3a5f; border-radius: 12px; padding: 16px; text-align: center; color: white; border: 2px solid #4f9cf9;">
+      <div style="font-size: 28px;">🖥️</div>
+      <div style="font-weight: 700; font-size: 14px; margin-top: 6px;">RECETAR APP</div>
+      <div style="font-size: 11px; opacity: 0.8; margin-top: 4px;">Next.js · Neon/Prisma · Supabase Storage · AuthJS</div>
+    </div>
+    <div style="display:flex;align-items:center; font-size:22px; color:#666;">→</div>
+    <div style="flex:1; background: #1e3a5f; border-radius: 12px; padding: 16px; text-align: center; color: white;">
+      <div style="font-size: 28px;">🤒</div>
+      <div style="font-weight: 700; font-size: 14px; margin-top: 6px;">PACIENTE</div>
+      <div style="font-size: 11px; opacity: 0.8; margin-top: 4px;">Recibe WhatsApp</div>
+    </div>
+  </div>
+
+  <!-- Flow Steps -->
+  <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; align-items: start;">
+
+    <div style="background: rgba(79,156,249,0.12); border: 1px solid #4f9cf9; border-radius: 10px; padding: 12px; text-align: center;">
+      <div style="width: 28px; height: 28px; background: #4f9cf9; border-radius: 50%; display:flex;align-items:center;justify-content:center; color:white; font-weight:700; font-size:12px; margin: 0 auto 8px;">1</div>
+      <div style="font-size: 12px; font-weight: 600;">Upload PDF</div>
+      <div style="font-size: 10px; opacity: 0.7; margin-top: 4px;">Supabase Storage → URL firmada</div>
+    </div>
+
+    <div style="background: rgba(79,156,249,0.12); border: 1px solid #4f9cf9; border-radius: 10px; padding: 12px; text-align: center;">
+      <div style="width: 28px; height: 28px; background: #4f9cf9; border-radius: 50%; display:flex;align-items:center;justify-content:center; color:white; font-weight:700; font-size:12px; margin: 0 auto 8px;">2</div>
+      <div style="font-size: 12px; font-weight: 600;">Crear Preferencia MP</div>
+      <div style="font-size: 10px; opacity: 0.7; margin-top: 4px;">Con token OAuth del médico</div>
+    </div>
+
+    <div style="background: rgba(79,156,249,0.12); border: 1px solid #4f9cf9; border-radius: 10px; padding: 12px; text-align: center;">
+      <div style="width: 28px; height: 28px; background: #4f9cf9; border-radius: 50%; display:flex;align-items:center;justify-content:center; color:white; font-weight:700; font-size:12px; margin: 0 auto 8px;">3</div>
+      <div style="font-size: 12px; font-weight: 600;">WhatsApp Template</div>
+      <div style="font-size: 10px; opacity: 0.7; margin-top: 4px;">Link de pago al paciente</div>
+    </div>
+
+    <div style="background: rgba(34,197,94,0.12); border: 1px solid #22c55e; border-radius: 10px; padding: 12px; text-align: center;">
+      <div style="width: 28px; height: 28px; background: #22c55e; border-radius: 50%; display:flex;align-items:center;justify-content:center; color:white; font-weight:700; font-size:12px; margin: 0 auto 8px;">4</div>
+      <div style="font-size: 12px; font-weight: 600;">Paciente Paga</div>
+      <div style="font-size: 10px; opacity: 0.7; margin-top: 4px;">MP Checkout Pro → dinero al médico</div>
+    </div>
+
+    <div style="background: rgba(34,197,94,0.12); border: 1px solid #22c55e; border-radius: 10px; padding: 12px; text-align: center;">
+      <div style="width: 28px; height: 28px; background: #22c55e; border-radius: 50%; display:flex;align-items:center;justify-content:center; color:white; font-weight:700; font-size:12px; margin: 0 auto 8px;">5</div>
+      <div style="font-size: 12px; font-weight: 600;">Webhook → PDF</div>
+      <div style="font-size: 10px; opacity: 0.7; margin-top: 4px;">App detecta pago, envía receta por WA</div>
+    </div>
+
+  </div>
+
+  <!-- Integrations -->
+  <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+    <div style="background: #1a1a2e; border: 1px solid #333; border-radius: 10px; padding: 12px; text-align: center;">
+      <div style="font-size: 20px;">🔐</div>
+      <div style="font-size: 11px; font-weight: 600; margin-top: 6px; color: #a0a0b0;">AUTH</div>
+      <div style="font-size: 10px; color: #666; margin-top: 2px;">AuthJS · email+pass · aprobación manual</div>
+    </div>
+    <div style="background: #1a1a2e; border: 1px solid #333; border-radius: 10px; padding: 12px; text-align: center;">
+      <div style="font-size: 20px;">💳</div>
+      <div style="font-size: 11px; font-weight: 600; margin-top: 6px; color: #a0a0b0;">MERCADOPAGO</div>
+      <div style="font-size: 10px; color: #666; margin-top: 2px;">OAuth por médico · Checkout Pro · Webhooks</div>
+    </div>
+    <div style="background: #1a1a2e; border: 1px solid #333; border-radius: 10px; padding: 12px; text-align: center;">
+      <div style="font-size: 20px;">💬</div>
+      <div style="font-size: 11px; font-weight: 600; margin-top: 6px; color: #a0a0b0;">WHATSAPP</div>
+      <div style="font-size: 10px; color: #666; margin-top: 2px;">Meta Business API · Templates aprobados</div>
+    </div>
+    <div style="background: #1a1a2e; border: 1px solid #333; border-radius: 10px; padding: 12px; text-align: center;">
+      <div style="font-size: 20px;">📁</div>
+      <div style="font-size: 11px; font-weight: 600; margin-top: 6px; color: #a0a0b0;">STORAGE</div>
+      <div style="font-size: 10px; color: #666; margin-top: 2px;">Supabase Storage · PDFs privados · URLs firmadas</div>
+    </div>
+  </div>
+
+</div>

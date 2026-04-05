@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard v6 — RecetaMed</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+    background: #e2e8f0;
+    color: #0f172a;
+    min-height: 100vh;
+    font-size: 16px;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    transition: all 0.5s ease;
+    background: transparent;
+  }
+  nav.scrolled {
+    background: rgba(226,232,240,0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid #cbd5e1;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+  .nav-inner {
+    max-width: 1152px;
+    margin: 0 auto;
+    padding: 0 32px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; color: #0f172a; text-decoration: none; }
+  .nav-logo-icon { width: 36px; height: 36px; background: #334155; border-radius: 9px; display:flex; align-items:center; justify-content:center; }
+  .nav-logo-icon svg { width: 18px; height: 18px; fill: white; }
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a { font-size: 14px; font-weight: 500; color: #64748b; text-decoration: none; transition: color 0.2s; }
+  .nav-links a:hover { color: #0f172a; }
+  .nav-right { display: flex; align-items: center; gap: 14px; }
+  .nav-active { font-size: 14px; font-weight: 700; color: #0f172a; }
+  .nav-greeting { font-size: 14px; color: #64748b; }
+  .btn-logout {
+    display: flex; align-items: center; gap: 6px;
+    color: #64748b; font-size: 13px; font-weight: 500;
+    border: 1px solid #cbd5e1; border-radius: 7px; padding: 6px 13px;
+    cursor: pointer; background: transparent; transition: all 0.15s;
+  }
+  .btn-logout:hover { background: #f1f5f9; color: #334155; }
+
+  /* MAIN */
+  main {
+    max-width: 1152px;
+    margin: 0 auto;
+    padding: 96px 32px 56px;
+  }
+
+  /* HEADER */
+  .page-header { margin-bottom: 24px; }
+  .page-header h1 { font-size: 28px; font-weight: 700; color: #0f172a; }
+  .page-header p { font-size: 15px; color: #64748b; margin-top: 5px; }
+
+  /* CHIPS */
+  .chips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+  .chip {
+    background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;
+    padding: 16px 18px; display: flex; align-items: flex-start; gap: 12px;
+    transition: all 0.3s;
+  }
+  .chip:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.07); }
+  .chip-icon { width: 36px; height: 36px; border-radius: 9px; background: #f1f5f9; display:flex;align-items:center;justify-content:center; flex-shrink:0; font-size: 16px; }
+  .chip h3 { font-size: 14px; font-weight: 700; color: #0f172a; }
+  .chip p { font-size: 13px; color: #94a3b8; margin-top: 3px; line-height: 1.4; }
+
+  /* TIPO SELECTOR */
+  .tipo-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  .tipo-btn {
+    background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;
+    padding: 18px 20px; cursor: pointer;
+    display: flex; align-items: center; gap: 14px;
+    transition: all 0.18s;
+  }
+  .tipo-btn:hover { border-color: #cbd5e1; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+  .tipo-btn.selected { border-color: #f59e0b; background: #fffbeb; box-shadow: 0 2px 12px rgba(245,158,11,0.1); }
+  .tipo-icon { width: 42px; height: 42px; border-radius: 10px; background: #f1f5f9; display:flex;align-items:center;justify-content:center; font-size: 20px; flex-shrink:0; }
+  .tipo-btn.selected .tipo-icon { background: #fef3c7; }
+  .tipo-text h3 { font-size: 15px; font-weight: 700; color: #0f172a; }
+  .tipo-text p { font-size: 13px; color: #94a3b8; margin-top: 3px; }
+  .tipo-check {
+    margin-left: auto; width: 22px; height: 22px; border-radius: 50%;
+    border: 2px solid #e2e8f0; flex-shrink: 0;
+    display:flex;align-items:center;justify-content:center;
+    font-size: 12px; font-weight: 700;
+  }
+  .tipo-btn.selected .tipo-check { background: #f59e0b; border-color: #f59e0b; color: white; }
+
+  /* MAIN GRID */
+  .main-grid { display: grid; grid-template-columns: 1fr 340px; gap: 16px; }
+
+  /* CARD */
+  .card {
+    background: #fff; border: 1px solid #e2e8f0; border-radius: 14px;
+    padding: 24px 28px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .card-title { font-size: 17px; font-weight: 700; color: #0f172a; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+  .tipo-tag { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 5px; background: #f1f5f9; color: #64748b; letter-spacing: 0.5px; }
+
+  /* FORM */
+  .field-group { margin-bottom: 18px; }
+  label { display:block; font-size: 14px; font-weight: 600; color: #334155; margin-bottom: 6px; }
+  .dropzone {
+    border: 2px dashed #e2e8f0; border-radius: 12px;
+    padding: 36px 20px; text-align: center; background: #f8fafc;
+    transition: border-color 0.2s;
+  }
+  .dropzone:hover { border-color: #94a3b8; }
+  .dropzone .drop-icon { font-size: 28px; margin-bottom: 10px; }
+  .dropzone p { font-size: 14px; color: #64748b; font-weight: 500; }
+  .dropzone small { font-size: 12px; color: #94a3b8; margin-top: 3px; display: block; }
+  .input-group { display: flex; }
+  .input-prefix {
+    background: #f1f5f9; border: 1px solid #e2e8f0; border-right: none;
+    border-radius: 8px 0 0 8px; padding: 0 14px;
+    display:flex;align-items:center; font-size: 14px; color: #64748b; white-space:nowrap;
+  }
+  .input-field {
+    flex:1; border: 1px solid #e2e8f0; border-radius: 0 8px 8px 0;
+    padding: 11px 14px; font-size: 15px; color: #334155; background: #fff; outline:none;
+  }
+  .input-field:focus { border-color: #94a3b8; }
+  .field-hint { font-size: 12px; color: #94a3b8; margin-top: 5px; }
+  .status-bar {
+    display: flex; align-items: center; gap: 8px;
+    border: 1px solid #e2e8f0; border-radius: 9px;
+    padding: 11px 15px; margin: 14px 0;
+    font-size: 14px; color: #64748b; background: #f8fafc;
+  }
+  .btn-enviar {
+    width: 100%; padding: 14px; background: #334155; color: white;
+    border-radius: 9px; border: none; font-size: 15px; font-weight: 700; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: background 0.2s;
+  }
+  .btn-enviar:hover { background: #1e293b; }
+
+  /* HISTORIAL */
+  .historial-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .historial-header h2 { font-size: 16px; font-weight: 700; }
+  .historial-header a { font-size: 13px; color: #94a3b8; cursor:pointer; }
+  .receta-item { display: flex; align-items: center; gap: 11px; padding: 11px 0; border-bottom: 1px solid #f1f5f9; }
+  .receta-item:last-child { border-bottom: none; }
+  .receta-icon { width: 36px; height: 36px; border-radius: 9px; background: #f1f5f9; display:flex;align-items:center;justify-content:center; font-size: 15px; flex-shrink:0; }
+  .receta-info { flex:1; min-width:0; }
+  .receta-name { font-size: 13px; font-weight: 600; color: #0f172a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .receta-meta { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+  .receta-right { text-align: right; flex-shrink:0; }
+  .badge { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; display:inline-flex;align-items:center;gap:3px; }
+  .badge-sent { background: #dcfce7; color: #166534; }
+  .badge-wait { background: #fef3c7; color: #92400e; }
+  .badge-estudios { background: #ede9fe; color: #5b21b6; }
+  .receta-time { font-size: 11px; color: #94a3b8; margin-top: 3px; }
+
+  /* FLUJO */
+  .flujo-card {
+    margin-top: 16px;
+    background: #cbd5e1;
+    border: 3px dashed #94a3b8;
+    border-radius: 14px;
+    padding: 22px 28px;
+  }
+  .flujo-card h4 { font-size: 15px; font-weight: 700; margin-bottom: 14px; color: #0f172a; }
+  .flujo-step { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 11px; }
+  .flujo-step:last-child { margin-bottom: 0; }
+  .flujo-num {
+    width: 24px; height: 24px; border-radius: 50%; background: #334155; color: white;
+    font-size: 11px; font-weight: 700;
+    display:flex;align-items:center;justify-content:center; flex-shrink:0; margin-top:1px;
+  }
+  .flujo-step p { font-size: 14px; color: #475569; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <div class="nav-logo-icon">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 2l5 5h-5V4zM8 13h8v1.5H8V13zm0 3h8v1.5H8V16zm0-6h3v1.5H8V10z"/></svg>
+      </div>
+      RecetaMed
+    </a>
+    <div class="nav-links">
+      <a href="#">Funcionalidades</a>
+      <a href="#">Como Funciona</a>
+      <a href="#">Precios</a>
+    </div>
+    <div class="nav-right">
+      <span class="nav-active">Dashboard</span>
+      <span class="nav-greeting">Hola, Dr. García</span>
+      <button class="btn-logout">↪ Salir</button>
+    </div>
+  </div>
+</nav>
+
+<main>
+
+  <div class="page-header">
+    <h1>Panel de Recetas</h1>
+    <p>Cargá y enviá recetas médicas con cobro automático via MercadoPago.</p>
+  </div>
+
+  <div class="chips">
+    <div class="chip">
+      <div class="chip-icon">⚡</div>
+      <div><h3>Flujo Automático</h3><p>Link de pago + entrega de receta en un solo flujo</p></div>
+    </div>
+    <div class="chip">
+      <div class="chip-icon">🛡️</div>
+      <div><h3>Cobro Garantizado</h3><p>La receta solo se envía después del pago</p></div>
+    </div>
+    <div class="chip">
+      <div class="chip-icon">💬</div>
+      <div><h3>WhatsApp Directo</h3><p>Comunicación directa con tus pacientes</p></div>
+    </div>
+  </div>
+
+  <div class="tipo-selector">
+    <div class="tipo-btn selected" onclick="selectTipo(this,'receta')">
+      <div class="tipo-icon">📋</div>
+      <div class="tipo-text">
+        <h3>Receta Médica</h3>
+        <p>Receta autorizada por el Ministerio de Salud</p>
+      </div>
+      <div class="tipo-check">✓</div>
+    </div>
+    <div class="tipo-btn" onclick="selectTipo(this,'estudios')">
+      <div class="tipo-icon">🔬</div>
+      <div class="tipo-text">
+        <h3>Estudios Complementarios</h3>
+        <p>Pedido de laboratorio o diagnóstico por imágenes</p>
+      </div>
+      <div class="tipo-check"></div>
+    </div>
+  </div>
+
+  <div class="main-grid">
+    <div class="card">
+      <div class="card-title">📄 Nueva Receta <span class="tipo-tag" id="tipo-tag">RECETA</span></div>
+      <div class="field-group">
+        <label id="pdf-label">Receta Médica (PDF)</label>
+        <div class="dropzone">
+          <div class="drop-icon">⬆️</div>
+          <p>Arrastrá el PDF de la receta aquí</p>
+          <small>o hacé clic para seleccionar</small>
+        </div>
+      </div>
+      <div class="field-group">
+        <label>WhatsApp del Paciente</label>
+        <div class="input-group">
+          <div class="input-prefix">+54</div>
+          <input class="input-field" placeholder="11 1234-5678" type="tel">
+        </div>
+        <div class="field-hint">Número sin el 0 ni el 15. Ejemplo: 11 1234-5678</div>
+      </div>
+      <div class="field-group">
+        <label>Monto a Cobrar</label>
+        <div class="input-group">
+          <div class="input-prefix">ARS $</div>
+          <input class="input-field" type="number" value="2500">
+        </div>
+      </div>
+      <div class="status-bar">✈️ Listo para enviar</div>
+      <button class="btn-enviar">✈️ Enviar Link de Pago</button>
+    </div>
+
+    <div class="card">
+      <div class="historial-header">
+        <h2>Recetas Recientes</h2>
+        <a>Ver todo ↓</a>
+      </div>
+      <div class="receta-item">
+        <div class="receta-icon">📋</div>
+        <div class="receta-info">
+          <div class="receta-name">Receta_Martinez_Juan.pdf</div>
+          <div class="receta-meta">+54 11 5555-1234 · $2.500</div>
+        </div>
+        <div class="receta-right">
+          <span class="badge badge-sent">✓ Enviada</span>
+          <div class="receta-time">Hoy, 14:32</div>
+        </div>
+      </div>
+      <div class="receta-item">
+        <div class="receta-icon">🔬</div>
+        <div class="receta-info">
+          <div class="receta-name">Estudios_Lopez_Mari...</div>
+          <div class="receta-meta">+54 11 5555-5678 · $3.000</div>
+        </div>
+        <div class="receta-right">
+          <span class="badge badge-estudios">Estudios</span>
+          <div class="receta-time">Hoy, 13:15</div>
+        </div>
+      </div>
+      <div class="receta-item">
+        <div class="receta-icon">📋</div>
+        <div class="receta-info">
+          <div class="receta-name">Receta_Garcia_Pedro.pdf</div>
+          <div class="receta-meta">+54 11 5555-9012 · $2.500</div>
+        </div>
+        <div class="receta-right">
+          <span class="badge badge-wait">⏳ Esperando pago</span>
+          <div class="receta-time">Ayer, 18:45</div>
+        </div>
+      </div>
+      <div class="receta-item">
+        <div class="receta-icon">🔬</div>
+        <div class="receta-info">
+          <div class="receta-name">Lab_Fernandez_Ana.pdf</div>
+          <div class="receta-meta">+54 11 5555-3344 · $4.200</div>
+        </div>
+        <div class="receta-right">
+          <span class="badge badge-sent">✓ Enviada</span>
+          <div class="receta-time">Ayer, 10:20</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flujo-card">
+    <h4>Cómo funciona el flujo</h4>
+    <div class="flujo-step"><div class="flujo-num">1</div><p>Elegís el tipo: <strong>Receta Médica</strong> o <strong>Estudios Complementarios</strong></p></div>
+    <div class="flujo-step"><div class="flujo-num">2</div><p>Cargás el PDF generado por la app del Ministerio de Salud</p></div>
+    <div class="flujo-step"><div class="flujo-num">3</div><p>Ingresás el número de WhatsApp del paciente y el monto a cobrar</p></div>
+    <div class="flujo-step"><div class="flujo-num">4</div><p>Se envía automáticamente un link de pago de MercadoPago al paciente</p></div>
+    <div class="flujo-step"><div class="flujo-num">5</div><p>Cuando el paciente paga, MercadoPago nos notifica (webhook) y el PDF se envía por WhatsApp</p></div>
+  </div>
+
+</main>
+
+<script>
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 20);
+  });
+
+  function selectTipo(btn, tipo) {
+    document.querySelectorAll('.tipo-btn').forEach(b => {
+      b.classList.remove('selected');
+      b.querySelector('.tipo-check').textContent = '';
+    });
+    btn.classList.add('selected');
+    btn.querySelector('.tipo-check').textContent = '✓';
+    const esEstudios = tipo === 'estudios';
+    document.getElementById('tipo-tag').textContent = esEstudios ? 'ESTUDIOS' : 'RECETA';
+    document.getElementById('pdf-label').textContent = esEstudios ? 'Pedido de Estudios (PDF)' : 'Receta Médica (PDF)';
+  }
+</script>
+</body>
+</html>

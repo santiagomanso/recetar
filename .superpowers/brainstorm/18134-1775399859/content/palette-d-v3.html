@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paleta D — Left Border Variants</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif; background: #111827; color: #f1f5f9; padding: 32px; }
+
+  h1 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .subtitle { font-size: 13px; color: #94a3b8; margin-bottom: 32px; }
+
+  .variants { display: flex; flex-direction: column; gap: 40px; }
+
+  .variant-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    color: #64748b; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;
+  }
+  .variant-label::after { content: ''; flex: 1; height: 1px; background: #1e293b; }
+
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+  /* ── LIGHT THEME ── */
+  .light {
+    background: #e2e8f0;
+    border-radius: 14px;
+    padding: 20px;
+  }
+  .light .panel-title { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; color: #64748b; margin-bottom: 14px; text-transform: uppercase; }
+  .light .navbar {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    border: 1px solid #cbd5e1;
+  }
+  .light .navbar .logo { font-size: 13px; font-weight: 700; color: #334155; }
+  .light .navbar .nav-items { display: flex; gap: 16px; }
+  .light .navbar .nav-item { font-size: 11px; color: #64748b; }
+  .light .navbar .btn-sm {
+    background: #334155; color: white;
+    border-radius: 6px; padding: 5px 12px; font-size: 11px; font-weight: 600;
+  }
+  .light .grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 12px; }
+  .light .card {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 16px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .light .card-title { font-size: 12px; font-weight: 700; color: #0f172a; margin-bottom: 4px; }
+  .light .card-sub { font-size: 10px; color: #94a3b8; margin-bottom: 12px; }
+  .light .field { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 7px 10px; font-size: 10px; color: #334155; margin-bottom: 8px; }
+  .light .btn-primary {
+    background: #334155; color: white;
+    border-radius: 7px; padding: 8px 14px;
+    font-size: 11px; font-weight: 700; width: 100%;
+    text-align: center; margin-top: 4px;
+  }
+  .light .badge-pending { background: #fef3c7; color: #92400e; border-radius: 20px; padding: 2px 8px; font-size: 9px; font-weight: 600; }
+  .light .badge-ok { background: #dcfce7; color: #166534; border-radius: 20px; padding: 2px 8px; font-size: 9px; font-weight: 600; }
+
+  /* ── DARK THEME ── */
+  .dark {
+    background: #0b0f1a;
+    border-radius: 14px;
+    padding: 20px;
+  }
+  .dark .panel-title { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; color: #475569; margin-bottom: 14px; text-transform: uppercase; }
+  .dark .navbar {
+    background: #1e293b;
+    border-radius: 8px;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    border: 1px solid #334155;
+  }
+  .dark .navbar .logo { font-size: 13px; font-weight: 700; color: #94a3b8; }
+  .dark .navbar .nav-item { font-size: 11px; color: #475569; }
+  .dark .navbar .btn-sm {
+    background: #334155; color: #e2e8f0;
+    border-radius: 6px; padding: 5px 12px; font-size: 11px; font-weight: 600;
+  }
+  .dark .grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 12px; }
+  .dark .card {
+    background: #1e293b;
+    border-radius: 10px;
+    padding: 16px;
+    border: 1px solid #334155;
+  }
+  .dark .card-title { font-size: 12px; font-weight: 700; color: #f1f5f9; margin-bottom: 4px; }
+  .dark .card-sub { font-size: 10px; color: #475569; margin-bottom: 12px; }
+  .dark .field { background: #0b0f1a; border: 1px solid #334155; border-radius: 6px; padding: 7px 10px; font-size: 10px; color: #94a3b8; margin-bottom: 8px; }
+  .dark .btn-primary {
+    background: #334155; color: #f1f5f9;
+    border-radius: 7px; padding: 8px 14px;
+    font-size: 11px; font-weight: 700; width: 100%;
+    text-align: center; margin-top: 4px;
+  }
+  .dark .badge-pending { background: rgba(245,158,11,0.15); color: #f59e0b; border-radius: 20px; padding: 2px 8px; font-size: 9px; font-weight: 600; }
+  .dark .badge-ok { background: rgba(34,197,94,0.12); color: #4ade80; border-radius: 20px; padding: 2px 8px; font-size: 9px; font-weight: 600; }
+
+  /* historial rows */
+  .row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid; font-size: 10px; }
+  .light .row { border-color: #f1f5f9; color: #334155; }
+  .dark .row { border-color: #1e293b; color: #94a3b8; }
+
+  /* ── BORDER VARIANTS ── */
+  /* V1: 3px primary left */
+  .border-v1 { border-left: 3px solid #334155 !important; border-radius: 0 10px 10px 0 !important; }
+  .dark .border-v1 { border-left: 3px solid #94a3b8 !important; }
+
+  /* V2: 4px accent left */
+  .border-v2 { border-left: 4px solid #f59e0b !important; border-radius: 0 10px 10px 0 !important; }
+  .dark .border-v2 { border-left: 4px solid #f59e0b !important; }
+
+  /* V3: gradient left (accent + primary) */
+  .border-v3 { border-left: 4px solid transparent !important; border-radius: 0 10px 10px 0 !important; position: relative; }
+  .border-v3::before { content: ''; position: absolute; left: -4px; top: 0; bottom: 0; width: 4px; background: linear-gradient(to bottom, #f59e0b, #334155); border-radius: 4px 0 0 4px; }
+
+  .select-bar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: #0b0f1a; border-top: 1px solid #1e293b;
+    padding: 14px 32px; display: flex; gap: 12px; align-items: center;
+  }
+  .sel-btn {
+    border: 2px solid #334155; background: transparent; color: #94a3b8;
+    border-radius: 8px; padding: 8px 20px; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .sel-btn:hover, .sel-btn.active { border-color: #f59e0b; color: #f59e0b; background: rgba(245,158,11,0.08); }
+  .sel-label { font-size: 12px; color: #475569; margin-right: 4px; }
+  body { padding-bottom: 80px; }
+</style>
+</head>
+<body>
+
+<h1>Left Border — 3 Variantes</h1>
+<p class="subtitle">Colores D2 · Accent #f59e0b en light Y dark · BG slate-200 en light</p>
+
+<div class="variants">
+
+  <!-- VARIANTE 1 -->
+  <div>
+    <div class="variant-label">Variante 1 — Borde izquierdo primary (slate)</div>
+    <div class="split">
+      <div class="light">
+        <div class="panel-title">☀️ Light</div>
+        <div class="navbar">
+          <span class="logo">RecetaMed</span>
+          <div class="nav-items"><span class="nav-item">Dashboard</span><span class="nav-item">Historial</span></div>
+          <span class="btn-sm">Dr. García</span>
+        </div>
+        <div class="grid">
+          <div class="card border-v1">
+            <div class="card-title">Nueva Receta</div>
+            <div class="card-sub">Completá los datos del paciente</div>
+            <div class="field">📎 receta-ministerio.pdf</div>
+            <div class="field">📱 +54 11 1234-5678</div>
+            <div class="field">💵 ARS $ 3.500</div>
+            <div class="btn-primary">Enviar Link de Pago →</div>
+          </div>
+          <div class="card border-v1">
+            <div class="card-title">Recientes</div>
+            <div class="card-sub">Últimas recetas enviadas</div>
+            <div class="row"><span>García, Juan</span><span class="badge-ok">Pagado</span></div>
+            <div class="row"><span>López, María</span><span class="badge-pending">Pendiente</span></div>
+            <div class="row"><span>Díaz, Carlos</span><span class="badge-ok">Pagado</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="dark">
+        <div class="panel-title">🌙 Dark</div>
+        <div class="navbar">
+          <span class="logo">RecetaMed</span>
+          <div style="display:flex;gap:16px"><span class="nav-item">Dashboard</span><span class="nav-item">Historial</span></div>
+          <span class="btn-sm">Dr. García</span>
+        </div>
+        <div class="grid">
+          <div class="card border-v1">
+            <div class="card-title">Nueva Receta</div>
+            <div class="card-sub">Completá los datos del paciente</div>
+            <div class="field">📎 receta-ministerio.pdf</div>
+            <div class="field">📱 +54 11 1234-5678</div>
+            <div class="field">💵 ARS $ 3.500</div>
+            <div class="btn-primary">Enviar Link de Pago →</div>
+          </div>
+          <div class="card border-v1">
+            <div class="card-title">Recientes</div>
+            <div class="card-sub">Últimas recetas enviadas</div>
+            <div class="row"><span>García, Juan</span><span class="badge-ok">Pagado</span></div>
+            <div class="row"><span>López, María</span><span class="badge-pending">Pendiente</span></div>
+            <div class="row"><span>Díaz, Carlos</span><span class="badge-ok">Pagado</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VARIANTE 2 -->
+  <div>
+    <div class="variant-label">Variante 2 — Borde izquierdo accent amber (mismo en light y dark)</div>
+    <div class="split">
+      <div class="light">
+        <div class="panel-title">☀️ Light</div>
+        <div class="navbar">
+          <span class="logo">RecetaMed</span>
+          <div class="nav-items"><span class="nav-item">Dashboard</span><span class="nav-item">Historial</span></div>
+          <span class="btn-sm">Dr. García</span>
+        </div>
+        <div class="grid">
+          <div class="card border-v2">
+            <div class="card-title">Nueva Receta</div>
+            <div class="card-sub">Completá los datos del paciente</div>
+            <div class="field">📎 receta-ministerio.pdf</div>
+            <div class="field">📱 +54 11 1234-5678</div>
+            <div class="field">💵 ARS $ 3.500</div>
+            <div class="btn-primary">Enviar Link de Pago →</div>
+          </div>
+          <div class="card border-v2">
+            <div class="card-title">Recientes</div>
+            <div class="card-sub">Últimas recetas enviadas</div>
+            <div class="row"><span>García, Juan</span><span class="badge-ok">Pagado</span></div>
+            <div class="row"><span>López, María</span><span class="badge-pending">Pendiente</span></div>
+            <div class="row"><span>Díaz, Carlos</span><span class="badge-ok">Pagado</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="dark">
+        <div class="panel-title">🌙 Dark</div>
+        <div class="navbar">
+          <span class="logo">RecetaMed</span>
+          <div style="display:flex;gap:16px"><span class="nav-item">Dashboard</span><span class="nav-item">Historial</span></div>
+          <span class="btn-sm">Dr. García</span>
+        </div>
+        <div class="grid">
+          <div class="card border-v2">
+            <div class="card-title">Nueva Receta</div>
+            <div class="card-sub">Completá los datos del paciente</div>
+            <div class="field">📎 receta-ministerio.pdf</div>
+            <div class="field">📱 +54 11 1234-5678</div>
+            <div class="field">💵 ARS $ 3.500</div>
+            <div class="btn-primary">Enviar Link de Pago →</div>
+          </div>
+          <div class="card border-v2">
+            <div class="card-title">Recientes</div>
+            <div class="card-sub">Últimas recetas enviadas</div>
+            <div class="row"><span>García, Juan</span><span class="badge-ok">Pagado</span></div>
+            <div class="row"><span>López, María</span><span class="badge-pending">Pendiente</span></div>
+            <div class="row"><span>Díaz, Carlos</span><span class="badge-ok">Pagado</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VARIANTE 3 -->
+  <div>
+    <div class="variant-label">Variante 3 — Borde izquierdo gradiente amber → slate</div>
+    <div class="split">
+      <div class="light">
+        <div class="panel-title">☀️ Light</div>
+        <div class="navbar">
+          <span class="logo">RecetaMed</span>
+          <div class="nav-items"><span class="nav-item">Dashboard</span><span class="nav-item">Historial</span></div>
+          <span class="btn-sm">Dr. García</span>
+        </div>
+        <div class="grid">
+          <div class="card border-v3">
+            <div class="card-title">Nueva Receta</div>
+            <div class="card-sub">Completá los datos del paciente</div>
+            <div class="field">📎 receta-ministerio.pdf</div>
+            <div class="field">📱 +54 11 1234-5678</div>
+            <div class="field">💵 ARS $ 3.500</div>
+            <div class="btn-primary">Enviar Link de Pago →</div>
+          </div>
+          <div class="card border-v3">
+            <div class="card-title">Recientes</div>
+            <div class="card-sub">Últimas recetas enviadas</div>
+            <div class="row"><span>García, Juan</span><span class="badge-ok">Pagado</span></div>
+            <div class="row"><span>López, María</span><span class="badge-pending">Pendiente</span></div>
+            <div class="row"><span>Díaz, Carlos</span><span class="badge-ok">Pagado</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="dark">
+        <div class="panel-title">🌙 Dark</div>
+        <div class="navbar">
+          <span class="logo">RecetaMed</span>
+          <div style="display:flex;gap:16px"><span class="nav-item">Dashboard</span><span class="nav-item">Historial</span></div>
+          <span class="btn-sm">Dr. García</span>
+        </div>
+        <div class="grid">
+          <div class="card border-v3">
+            <div class="card-title">Nueva Receta</div>
+            <div class="card-sub">Completá los datos del paciente</div>
+            <div class="field">📎 receta-ministerio.pdf</div>
+            <div class="field">📱 +54 11 1234-5678</div>
+            <div class="field">💵 ARS $ 3.500</div>
+            <div class="btn-primary">Enviar Link de Pago →</div>
+          </div>
+          <div class="card border-v3">
+            <div class="card-title">Recientes</div>
+            <div class="card-sub">Últimas recetas enviadas</div>
+            <div class="row"><span>García, Juan</span><span class="badge-ok">Pagado</span></div>
+            <div class="row"><span>López, María</span><span class="badge-pending">Pendiente</span></div>
+            <div class="row"><span>Díaz, Carlos</span><span class="badge-ok">Pagado</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="select-bar">
+  <span class="sel-label">Elegís:</span>
+  <button class="sel-btn" onclick="select(this,'v1')">Variante 1 — Primary</button>
+  <button class="sel-btn" onclick="select(this,'v2')">Variante 2 — Accent Amber</button>
+  <button class="sel-btn" onclick="select(this,'v3')">Variante 3 — Gradiente</button>
+</div>
+
+<script>
+let selected = null;
+function select(btn, val) {
+  document.querySelectorAll('.sel-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  selected = val;
+  if (window.__sp_select) window.__sp_select(val, btn.textContent.trim());
+}
+</script>
+</body>
+</html>
