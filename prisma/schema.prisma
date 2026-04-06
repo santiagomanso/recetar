@@ -13,10 +13,11 @@ model User {
   password       String
   specialty      String?
   status         UserStatus    @default(PENDING)
-  mpAccessToken  String?
-  mpRefreshToken String?
-  mpUserId       String?
-  config         DoctorConfig?
+  mpAccessToken        String?
+  mpRefreshToken       String?
+  mpUserId             String?
+  onboardingCompleted  Boolean       @default(false)
+  config               DoctorConfig?
   deliveries     Delivery[]
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
