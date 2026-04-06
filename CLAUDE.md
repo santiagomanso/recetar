@@ -181,6 +181,19 @@ export async function getPaymentsAction(specificDate: string) {
 
 All Prisma/DB queries go in `src/services/`. New service files follow the domain name (e.g., `payments.ts`, `shop.ts`, `appointments.ts`).
 
+### Service file responsibilities
+
+| File | Responsibility | Scales with |
+|------|---------------|-------------|
+| `services/users.ts` | All Prisma queries on the `User` model: `createUser`, `getUserByEmail`, `getUserById`, `getPendingUsers`, `updateUserStatus`. Never handles passwords or tokens — pure DB reads/writes. | New user fields, admin queries, doctor profile features |
+| `services/auth.ts` | Authentication logic that does NOT touch Prisma directly: `verifyPassword` (bcrypt compare), and future token management: `saveMPTokens`, `refreshMPToken`, `revokeSession`. Anything related to credentials, hashing, or OAuth tokens lives here. | MercadoPago OAuth, session revocation, future SSO |
+| `services/deliveries.ts` | All Prisma queries on the `Delivery` model: create, list, update status, get by id. | Delivery history, filtering, pagination |
+| `services/whatsapp.ts` | Meta Business API calls: send templates, send documents. No Prisma — pure HTTP to Meta. | New WhatsApp templates, chatbot steps |
+| `services/payments.ts` | MercadoPago API calls: create preference, verify payment. No Prisma — pure HTTP to MP. | Refunds, subscriptions, MP OAuth |
+| `services/storage.ts` | Supabase Storage: upload PDF, delete PDF, generate signed URL. No Prisma. | File management, expiry policies |
+
+**Rule:** if a function queries the DB → `users.ts` or `deliveries.ts`. If it calls an external API → `whatsapp.ts`, `payments.ts`, `storage.ts`. If it handles credentials/tokens → `auth.ts`.
+
 ### 2. Never make `page.tsx` async — use Suspense + async server component
 
 ```tsx
