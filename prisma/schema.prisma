@@ -70,6 +70,16 @@ model WhatsAppMessage {
   @@map("whatsapp_messages")
 }
 
+model ChatbotSession {
+  phone      String   @id
+  step       String
+  deliveryId String?
+  expiresAt  DateTime
+  updatedAt  DateTime @updatedAt
+
+  @@map("chatbot_sessions")
+}
+
 enum UserStatus {
   PENDING
   APPROVED
