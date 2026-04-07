@@ -26,6 +26,10 @@ export default auth((req: NextRequest & { auth: any }) => {
   // Auth routes (/login, /register)
   if (isAuthRoute) {
     if (isLoggedIn) {
+      const isAdminUser = session.user.email === process.env.ADMIN_EMAIL
+      if (isAdminUser) {
+        return NextResponse.redirect(new URL("/admin", nextUrl))
+      }
       const onboardingCompleted = session.user.onboardingCompleted
       return NextResponse.redirect(
         new URL(onboardingCompleted ? "/dashboard" : "/onboarding", nextUrl)
@@ -39,7 +43,9 @@ export default auth((req: NextRequest & { auth: any }) => {
     return NextResponse.redirect(new URL("/login", nextUrl))
   }
 
-  const onboardingCompleted = session.user.onboardingCompleted
+  const adminEmail = process.env.ADMIN_EMAIL
+  const isAdmin = session.user.email === adminEmail
+  const onboardingCompleted = isAdmin || session.user.onboardingCompleted
 
   // Onboarding route — if already completed, send to dashboard
   if (isOnboardingRoute && onboardingCompleted) {
@@ -52,11 +58,8 @@ export default auth((req: NextRequest & { auth: any }) => {
   }
 
   // Admin route — only the platform owner
-  if (isAdminRoute) {
-    const adminEmail = process.env.ADMIN_EMAIL
-    if (session.user.email !== adminEmail) {
-      return NextResponse.redirect(new URL("/dashboard", nextUrl))
-    }
+  if (isAdminRoute && !isAdmin) {
+    return NextResponse.redirect(new URL("/dashboard", nextUrl))
   }
 
   return NextResponse.next()
