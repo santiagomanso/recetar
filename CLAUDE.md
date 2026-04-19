@@ -194,7 +194,29 @@ All Prisma/DB queries go in `src/services/`. New service files follow the domain
 
 **Rule:** if a function queries the DB → `users.ts` or `deliveries.ts`. If it calls an external API → `whatsapp.ts`, `payments.ts`, `storage.ts`. If it handles credentials/tokens → `auth.ts`.
 
-### 2. Never make `page.tsx` async — use Suspense + async server component
+### 2. NUNCA hacer `page.tsx` async — JAMÁS, sin excepciones
+
+> ⛔ **Regla absoluta:** `page.tsx` NUNCA debe ser `async`. Ni para leer cookies, ni para leer `searchParams`, ni para nada. Si necesitás datos async, creá un componente `*-data.tsx` o `*-data.server.tsx` async y envolvelo en `<Suspense>`. La página solo renderiza el Suspense.
+
+```tsx
+// ✅ CORRECTO — page.tsx delega en un componente async
+export default function LoginPage({ searchParams }) {
+  return (
+    <Suspense>
+      <LoginPageData searchParams={searchParams} />
+    </Suspense>
+  )
+}
+
+// login-page-data.tsx — este sí puede ser async
+export async function LoginPageData({ searchParams }) {
+  const { error } = await searchParams
+  // ...
+}
+```
+
+<!-- alias original, no borrar -->
+### Never make `page.tsx` async — use Suspense + async server component
 
 ```tsx
 // ✅ CORRECT
@@ -220,7 +242,47 @@ export default async function ShopPage() {
 }
 ```
 
-### 3. No Prisma imports in components or hooks
+### 3. Components are pure UI — logic lives in custom hooks (MVVM)
+
+Every component that has behavior must be split into:
+- `_components/feature-name.tsx` — pure UI, no business logic, no direct action calls
+- `_hooks/use-feature-name.ts` — all logic, state, validation, action calls
+
+```
+FeatureComponent (pure UI — only renders, receives props from hook)
+  ↓
+useFeatureName (custom hook — state, validation, submit, error handling)
+  ↓
+featureAction (server action — thin wrapper)
+  ↓
+service function (Prisma / external API)
+```
+
+```tsx
+// ✅ CORRECT
+// _components/register-form.tsx — pure UI
+export function RegisterForm() {
+  const { form, onSubmit, isLoading, error, success } = useRegisterForm()
+  return <form onSubmit={form.handleSubmit(onSubmit)}>...</form>
+}
+
+// _hooks/use-register-form.ts — all logic
+export function useRegisterForm() {
+  const form = useForm(...)
+  const onSubmit = async (data) => { await registerAction(data) }
+  return { form, onSubmit, isLoading, error, success }
+}
+
+// ❌ WRONG — logic inside component
+export function RegisterForm() {
+  const [isLoading, setIsLoading] = useState(false)
+  const onSubmit = async (data) => { ... } // logic belongs in a hook
+}
+```
+
+**File location rule:** feature-specific components go in `app/**/_components/`, not in `src/components/`. `src/components/` is only for truly global, reusable UI primitives (e.g. Navbar, shared cards).
+
+### 4. No Prisma imports in components or hooks
 
 Components never import from `@prisma/client` or `@/lib/prisma`. The chain is always:
 `Component → Action (server action) → Service (Prisma query)`
