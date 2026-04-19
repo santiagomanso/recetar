@@ -16,24 +16,22 @@ export default {
         const user = await getUserByEmail(credentials.email as string)
         if (!user) return null
 
+        // Google-registered users have no password — block credentials login
+        if (!user.password) return null
+
         const valid = await verifyPassword(
           credentials.password as string,
           user.password
         )
         if (!valid) return null
 
-        if (user.status !== "APPROVED") {
-          throw new Error(
-            user.status === "PENDING" ? "PENDING_APPROVAL" : "ACCOUNT_REJECTED"
-          )
-        }
+        // Only block REJECTED users — PENDING users can now log in
+        if (user.status === "REJECTED") return null
 
         return {
           id: user.id,
           name: user.name,
           email: user.email,
-          status: user.status,
-          specialty: user.specialty,
           onboardingCompleted: user.onboardingCompleted,
         }
       },
