@@ -4,7 +4,6 @@ import { Navbar } from "@/components/navbar"
 import {
   HeroSection,
   FeaturesSection,
-  HowItWorksSection,
   PricingSection,
   CTASection,
   Footer,
@@ -17,7 +16,6 @@ export default function Home() {
       <main>
         <HeroSection />
         <FeaturesSection />
-        <HowItWorksSection />
         <PricingSection />
         <CTASection />
       </main>
