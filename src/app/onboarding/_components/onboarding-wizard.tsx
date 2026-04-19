@@ -108,7 +108,7 @@ export function OnboardingWizard({ hasSpecialty, email }: OnboardingWizardProps)
                 </div>
                 <div>
                   <p className="text-lg font-bold leading-none text-foreground">
-                    RecetaMed
+                    Recetar
                   </p>
                   <p className="mt-0.5 text-xs text-muted-foreground">
                     Configurá tu cuenta médica

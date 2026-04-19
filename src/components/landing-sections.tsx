@@ -326,7 +326,7 @@ export function CTASection() {
         
         <RevealAnimation direction="up" delay={100}>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-primary-foreground/80">
-            Unite a miles de medicos que ya simplifican su trabajo con RecetaMed.
+            Unite a miles de medicos que ya simplifican su trabajo con Recetar.
           </p>
         </RevealAnimation>
 
@@ -358,7 +358,7 @@ export function Footer() {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
               <FileText className="h-4 w-4 text-primary-foreground" />
             </div>
-            <span className="font-bold text-foreground">RecetaMed</span>
+            <span className="font-bold text-foreground">Recetar</span>
           </div>
 
           <div className="flex items-center gap-6 text-sm text-muted-foreground">
@@ -375,7 +375,7 @@ export function Footer() {
         </div>
 
         <div className="mt-8 border-t border-border pt-8 text-center text-sm text-muted-foreground">
-          <p>2026 RecetaMed. Esta es una version de demostacion (mock).</p>
+          <p>2026 Recetar. Esta es una version de demostacion (mock).</p>
         </div>
       </div>
     </footer>

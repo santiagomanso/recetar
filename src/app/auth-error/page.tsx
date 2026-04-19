@@ -50,7 +50,7 @@ export default async function AuthErrorPage({ searchParams }: AuthErrorPageProps
               <FileText className="h-6 w-6 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-foreground">RecetaMed</h1>
+              <h1 className="text-2xl font-bold text-foreground">Recetar</h1>
               <p className="text-sm text-muted-foreground">Accedé a tu cuenta</p>
             </div>
           </div>

@@ -9,7 +9,7 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'RecetaMed - Envío de Recetas Médicas',
+  title: 'Recetar - Envío de Recetas Médicas',
   description: 'Plataforma para médicos: envía recetas médicas con cobro previo via MercadoPago',
   generator: 'v0.app',
   icons: {
