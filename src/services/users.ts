@@ -49,3 +49,59 @@ export async function updateUserStatus(userId: string, status: UserStatus) {
     data: { status },
   })
 }
+
+export async function createGoogleUser(input: {
+  name: string
+  email: string
+}): Promise<SafeUser> {
+  const user = await db.user.create({
+    data: {
+      name: input.name,
+      email: input.email.toLowerCase(),
+      password: null,
+      status: "PENDING",
+      lastAuthProvider: "google",
+    },
+  })
+
+  const { password, mpAccessToken, mpRefreshToken, ...safeUser } = user
+  return safeUser
+}
+
+export async function updateLastAuthProvider(
+  userId: string,
+  provider: "credentials" | "google"
+): Promise<void> {
+  await db.user.update({
+    where: { id: userId },
+    data: { lastAuthProvider: provider },
+  })
+}
+
+export async function completeOnboarding(
+  userId: string,
+  data: { telephone: string; specialty?: string }
+): Promise<void> {
+  await db.user.update({
+    where: { id: userId },
+    data: {
+      telephone: data.telephone,
+      ...(data.specialty ? { specialty: data.specialty } : {}),
+      onboardingCompleted: true,
+    },
+  })
+}
+
+export async function saveMpTokens(
+  userId: string,
+  tokens: { accessToken: string; refreshToken: string; mpUserId: string }
+): Promise<void> {
+  await db.user.update({
+    where: { id: userId },
+    data: {
+      mpAccessToken: tokens.accessToken,
+      mpRefreshToken: tokens.refreshToken,
+      mpUserId: tokens.mpUserId,
+    },
+  })
+}
