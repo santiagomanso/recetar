@@ -35,7 +35,7 @@ const estadoConfig = {
   completado: {
     label: "Enviada",
     icon: <CheckCircle2 className="h-3.5 w-3.5" />,
-    className: "bg-accent/10 text-accent border-accent/20",
+    className: "bg-success/10 text-success border-success/20",
   },
   esperando: {
     label: "Esperando pago",
