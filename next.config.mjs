@@ -6,6 +6,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  allowedDevOrigins: ["superable-skylar-superpopulated.ngrok-free.dev"],
 }
 
 export default nextConfig
