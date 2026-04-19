@@ -77,7 +77,7 @@ export function PDFUpload({ onFileSelect, selectedFile }: PDFUploadProps) {
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       className={cn(
-        "relative flex flex-col items-center justify-center rounded-lg border-2 border-dashed p-8 transition-colors",
+        "relative flex flex-col items-center justify-center rounded-lg border-2 border-dashed p-6 transition-colors sm:p-8",
         isDragging
           ? "border-primary bg-primary/5"
           : "border-border bg-muted/30 hover:border-primary/50 hover:bg-muted/50"
