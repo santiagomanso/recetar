@@ -36,7 +36,7 @@ export async function LoginPageData({ searchParams }: LoginPageDataProps) {
               </div>
               <div>
                 <h1 className='text-2xl font-bold text-foreground'>
-                  RecetaMed
+                  Recetar
                 </h1>
                 <p className='text-sm text-muted-foreground'>
                   Accedé a tu cuenta
