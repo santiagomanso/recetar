@@ -40,7 +40,7 @@ export async function sendPaymentLink(
           type: "body",
           parameters: [
             { type: "text", text: doctorName },
-            { type: "text", text: `$${amount.toLocaleString("es-AR")} ARS` },
+            { type: "text", text: amount.toLocaleString("es-AR") },
             { type: "text", text: mpLink },
           ],
         },
