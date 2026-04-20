@@ -12,12 +12,15 @@ interface PDFUploadProps {
 export function PDFUpload({ onFileSelect, selectedFile }: PDFUploadProps) {
   const [isDragging, setIsDragging] = useState(false)
 
+  const isPDF = (file: File) =>
+    file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf")
+
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
       e.preventDefault()
       setIsDragging(false)
       const file = e.dataTransfer.files[0]
-      if (file && file.type === "application/pdf") {
+      if (file && isPDF(file)) {
         onFileSelect(file)
       }
     },
@@ -37,7 +40,7 @@ export function PDFUpload({ onFileSelect, selectedFile }: PDFUploadProps) {
   const handleFileInput = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0]
-      if (file && file.type === "application/pdf") {
+      if (file && isPDF(file)) {
         onFileSelect(file)
       }
     },
@@ -94,7 +97,7 @@ export function PDFUpload({ onFileSelect, selectedFile }: PDFUploadProps) {
       </p>
       <input
         type="file"
-        accept="application/pdf"
+        accept="application/pdf,.pdf"
         onChange={handleFileInput}
         className="absolute inset-0 cursor-pointer opacity-0"
       />
