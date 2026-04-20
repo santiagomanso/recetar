@@ -6,6 +6,7 @@ import {
   getUserById,
   createGoogleUser,
   updateLastAuthProvider,
+  saveUserImageIfEmpty,
 } from "@/services/users"
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
@@ -43,9 +44,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         // New Google user — create with PENDING status
         if (!existing) {
           await createGoogleUser({ name: user.name, email: user.email })
+          // Save Google profile image for new users
+          if (user.image) {
+            const newUser = await getUserByEmail(user.email)
+            if (newUser) await saveUserImageIfEmpty(newUser.id, user.image)
+          }
         } else {
           // Returning Google user — keep lastAuthProvider current
           await updateLastAuthProvider(existing.id, "google")
+          // Save Google profile image if user has none yet
+          if (user.image && !existing.image) {
+            await saveUserImageIfEmpty(existing.id, user.image)
+          }
         }
       }
 

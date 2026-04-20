@@ -105,3 +105,66 @@ export async function saveMpTokens(
     },
   })
 }
+
+export async function getUserWithConfig(id: string) {
+  return db.user.findUnique({
+    where: { id },
+    include: { config: true },
+  })
+}
+
+export async function updateUserProfile(
+  userId: string,
+  data: { specialty?: string; email: string; telephone?: string }
+): Promise<void> {
+  await db.user.update({
+    where: { id: userId },
+    data: {
+      ...(data.specialty !== undefined ? { specialty: data.specialty } : {}),
+      email: data.email.toLowerCase(),
+      ...(data.telephone !== undefined ? { telephone: data.telephone } : {}),
+    },
+  })
+}
+
+export async function updateUserImage(
+  userId: string,
+  imageUrl: string
+): Promise<void> {
+  await db.user.update({
+    where: { id: userId },
+    data: { image: imageUrl },
+  })
+}
+
+export async function unlinkMercadoPago(userId: string): Promise<void> {
+  await db.user.update({
+    where: { id: userId },
+    data: {
+      mpAccessToken: null,
+      mpRefreshToken: null,
+      mpUserId: null,
+    },
+  })
+}
+
+export async function upsertDefaultAmount(
+  userId: string,
+  amount: number
+): Promise<void> {
+  await db.doctorConfig.upsert({
+    where: { doctorId: userId },
+    update: { defaultAmount: amount },
+    create: { doctorId: userId, defaultAmount: amount },
+  })
+}
+
+export async function saveUserImageIfEmpty(
+  userId: string,
+  imageUrl: string
+): Promise<void> {
+  await db.user.update({
+    where: { id: userId, image: null },
+    data: { image: imageUrl },
+  })
+}

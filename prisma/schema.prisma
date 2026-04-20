@@ -15,6 +15,7 @@ model User {
   status         UserStatus    @default(PENDING)
   lastAuthProvider     String?
   telephone            String?
+  image                String?
   mpAccessToken        String?
   mpRefreshToken       String?
   mpUserId             String?
