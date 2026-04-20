@@ -5,7 +5,7 @@ import { toast } from "sonner"
 import { updatePrecioAction } from "@/app/configuracion/_actions/update-precio"
 
 export function usePrecioForm(initial: number | null) {
-  const [amount, setAmount] = useState(initial !== null ? String(initial) : "")
+  const [amount, setAmount] = useState(initial !== null ? String(initial) : "5000")
   const [isLoading, setIsLoading] = useState(false)
 
   async function handleSave() {

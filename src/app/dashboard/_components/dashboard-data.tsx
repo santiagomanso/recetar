@@ -1,10 +1,11 @@
+import { Suspense } from "react";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { DashboardNavbar } from "@/app/dashboard/_components/dashboard-navbar";
 import { RecetaForm } from "@/components/receta-form";
-import { HistorialMock } from "@/components/historial-mock";
+import { Historial } from "@/app/dashboard/_components/historial";
 import { FileText } from "lucide-react";
-import { getUserById } from "@/services/users";
+import { getUserById, getCachedDefaultAmount } from "@/services/users";
 
 export async function DashboardData() {
   const session = await auth();
@@ -13,7 +14,10 @@ export async function DashboardData() {
     redirect("/login");
   }
 
-  const user = await getUserById(session.user.id);
+  const [user, defaultAmount] = await Promise.all([
+    getUserById(session.user.id),
+    getCachedDefaultAmount(session.user.id),
+  ]);
 
   if (!user) {
     redirect("/login");
@@ -48,7 +52,7 @@ export async function DashboardData() {
                 <FileText className='h-5 w-5' />
                 Nueva Receta
               </h3>
-              <RecetaForm />
+              <RecetaForm initialMonto={defaultAmount ?? 5000} />
             </div>
           </div>
 
@@ -58,7 +62,9 @@ export async function DashboardData() {
               <h3 className='mb-4 text-lg font-semibold text-card-foreground'>
                 Recetas Recientes
               </h3>
-              <HistorialMock />
+              <Suspense fallback={<p className="text-sm text-muted-foreground">Cargando…</p>}>
+                <Historial doctorId={user.id} />
+              </Suspense>
             </div>
           </div>
         </div>

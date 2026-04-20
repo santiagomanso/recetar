@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache"
 import { db } from "@/lib/prisma"
 import type { RegisterInput, SafeUser } from "@/types/user"
 import type { UserStatus } from "@prisma/client"
@@ -106,6 +107,10 @@ export async function saveMpTokens(
   })
 }
 
+export async function getUserByMpUserId(mpUserId: string) {
+  return db.user.findFirst({ where: { mpUserId } })
+}
+
 export async function getUserWithConfig(id: string) {
   return db.user.findUnique({
     where: { id },
@@ -157,6 +162,17 @@ export async function upsertDefaultAmount(
     update: { defaultAmount: amount },
     create: { doctorId: userId, defaultAmount: amount },
   })
+}
+
+export function getCachedDefaultAmount(userId: string) {
+  return unstable_cache(
+    async () => {
+      const config = await db.doctorConfig.findUnique({ where: { doctorId: userId } })
+      return config?.defaultAmount ? Number(config.defaultAmount) : null
+    },
+    [`default-amount-${userId}`],
+    { revalidate: 60 }
+  )()
 }
 
 export async function saveUserImageIfEmpty(
