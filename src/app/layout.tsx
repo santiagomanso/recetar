@@ -11,23 +11,18 @@ const _geistMono = Geist_Mono({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: 'Recetar - Envío de Recetas Médicas',
   description: 'Plataforma para médicos: envía recetas médicas con cobro previo via MercadoPago',
-  generator: 'v0.app',
   icons: {
-    icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
-    ],
-    apple: '/apple-icon.png',
+    icon: '/steto.png',
+    apple: '/steto.png',
+  },
+  openGraph: {
+    title: 'Recetar - Envío de Recetas Médicas',
+    description: 'Plataforma para médicos: envía recetas médicas con cobro previo via MercadoPago',
+    images: [{ url: '/steto.png', width: 512, height: 512 }],
+  },
+  twitter: {
+    card: 'summary',
+    images: ['/steto.png'],
   },
 }
 
