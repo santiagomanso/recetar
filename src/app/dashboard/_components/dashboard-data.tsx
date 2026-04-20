@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { DashboardNavbar } from "@/app/dashboard/_components/dashboard-navbar";
 import { RecetaForm } from "@/components/receta-form";
 import { Historial } from "@/app/dashboard/_components/historial";
+import { HistorialSkeleton } from "@/app/dashboard/_components/historial-skeleton";
 import { FileText } from "lucide-react";
 import { getUserById, getCachedDefaultAmount } from "@/services/users";
 
@@ -62,7 +63,7 @@ export async function DashboardData() {
               <h3 className='mb-4 text-lg font-semibold text-card-foreground'>
                 Recetas Recientes
               </h3>
-              <Suspense fallback={<p className="text-sm text-muted-foreground">Cargando…</p>}>
+              <Suspense fallback={<HistorialSkeleton />}>
                 <Historial doctorId={user.id} />
               </Suspense>
             </div>
