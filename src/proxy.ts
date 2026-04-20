@@ -11,6 +11,7 @@ export default auth((req: NextRequest & { auth: any }) => {
   const isLoggedIn = !!session?.user
 
   const isApiAuthRoute = nextUrl.pathname.startsWith("/api/auth")
+  const isWebhookRoute = nextUrl.pathname.startsWith("/api/webhooks")
   const isPublicRoute = nextUrl.pathname === "/"
   const isAuthRoute = ["/login", "/register"].includes(nextUrl.pathname)
   const isAuthHelperRoute = nextUrl.pathname.startsWith("/auth/")
@@ -20,6 +21,9 @@ export default auth((req: NextRequest & { auth: any }) => {
 
   // Always allow AuthJS internal routes
   if (isApiAuthRoute) return NextResponse.next()
+
+  // Always allow webhooks (called by external services without session)
+  if (isWebhookRoute) return NextResponse.next()
 
   // Landing page: redirect logged-in users to dashboard/onboarding
   if (isPublicRoute) {
