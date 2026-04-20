@@ -5,13 +5,14 @@ import { sendRecetaAction } from "@/app/dashboard/_actions/send-receta"
 
 type Estado = "idle" | "enviando" | "exito" | "error"
 
-export function useRecetaForm() {
+export function useRecetaForm(initialMonto: number) {
   const [pdfFile, setPdfFile] = useState<File | null>(null)
   const [telefono, setTelefono] = useState("")
-  const [monto, setMonto] = useState("2500")
+  const [monto, setMonto] = useState(String(initialMonto))
   const [estado, setEstado] = useState<Estado>("idle")
   const [errorMsg, setErrorMsg] = useState("")
-  const puedeEnviar = !!pdfFile && telefono.length >= 10 && estado === "idle"
+  const telefonoDigits = telefono.replace(/\D/g, "")
+  const puedeEnviar = !!pdfFile && telefonoDigits.length >= 10 && estado === "idle"
   const enProceso = estado === "enviando"
 
   const handleEnviar = async () => {
@@ -22,7 +23,7 @@ export function useRecetaForm() {
 
     const formData = new FormData()
     formData.append("pdf", pdfFile)
-    formData.append("patientPhone", telefono)
+    formData.append("patientPhone", telefonoDigits)
     formData.append("amount", monto)
 
     const result = await sendRecetaAction(formData)
@@ -38,7 +39,7 @@ export function useRecetaForm() {
   const reset = () => {
     setPdfFile(null)
     setTelefono("")
-    setMonto("2500")
+    setMonto(String(initialMonto))
     setEstado("idle")
     setErrorMsg("")
   }

@@ -1,13 +1,19 @@
 "use client"
 
-import { Send, Loader2, CheckCircle2, AlertCircle } from "lucide-react"
+import { useRef } from "react"
+import { useRouter } from "next/navigation"
+import { Send, Loader2, CheckCircle2, AlertCircle, FilePlus2 } from "lucide-react"
+import { AsYouType } from "libphonenumber-js"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { PDFUpload } from "./pdf-upload"
 import { useRecetaForm } from "@/app/dashboard/_hooks/use-receta-form"
 
-export function RecetaForm() {
+export function RecetaForm({ initialMonto }: { initialMonto: number }) {
+  const router = useRouter()
+  const phoneFormatter = useRef(new AsYouType("AR"))
+
   const {
     pdfFile,
     setPdfFile,
@@ -21,7 +27,33 @@ export function RecetaForm() {
     enProceso,
     handleEnviar,
     reset,
-  } = useRecetaForm()
+  } = useRecetaForm(initialMonto)
+
+  function handleReset() {
+    reset()
+    router.refresh()
+  }
+
+  // Estado de éxito — mostrar solo el mensaje y botón de nueva receta
+  if (estado === "exito") {
+    return (
+      <div className="flex flex-col items-center gap-6 py-6 text-center">
+        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-success/10">
+          <CheckCircle2 className="h-8 w-8 text-success" />
+        </div>
+        <div>
+          <p className="text-lg font-semibold text-foreground">¡Link enviado!</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            El paciente recibirá la receta por WhatsApp una vez que pague.
+          </p>
+        </div>
+        <Button onClick={handleReset} className="w-full" size="lg">
+          <FilePlus2 className="mr-2 h-4 w-4" />
+          Nueva Receta
+        </Button>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6">
@@ -46,15 +78,20 @@ export function RecetaForm() {
               <Input
                 id="telefono"
                 type="tel"
-                placeholder="11 1234-5678"
+                placeholder="9 11 1234-5678"
                 value={telefono}
-                onChange={(e) => setTelefono(e.target.value.replace(/\D/g, ""))}
+                onChange={(e) => {
+                  phoneFormatter.current.reset()
+                  const formatted = phoneFormatter.current.input(e.target.value.replace(/\D/g, ""))
+                  setTelefono(formatted)
+                }}
                 className="w-full pl-14"
-                disabled={enProceso || estado === "exito"}
+                maxLength={16}
+                disabled={enProceso}
               />
             </div>
             <p className="text-xs text-muted-foreground">
-              Sin el 0 ni el 15. Ej: 11 1234-5678
+              Sin el 0 ni el 15. Ej: 9 11 1234-5678
             </p>
           </div>
 
@@ -69,24 +106,16 @@ export function RecetaForm() {
               <Input
                 id="monto"
                 type="number"
-                placeholder="2500"
+                placeholder="5000"
                 value={monto}
                 onChange={(e) => setMonto(e.target.value)}
                 className="w-full pl-16"
-                disabled={enProceso || estado === "exito"}
+                disabled={enProceso}
               />
             </div>
           </div>
         </div>
       </div>
-
-      {/* Estado */}
-      {estado === "exito" && (
-        <div className="flex items-center gap-2 rounded-lg border border-accent/30 bg-accent/10 px-4 py-3 text-sm font-medium text-accent">
-          <CheckCircle2 className="h-4 w-4 shrink-0" />
-          Link de pago enviado por WhatsApp. La receta se enviará automáticamente cuando el paciente pague.
-        </div>
-      )}
 
       {estado === "error" && (
         <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm font-medium text-destructive">
@@ -95,32 +124,24 @@ export function RecetaForm() {
         </div>
       )}
 
-      {/* Botón */}
-      {estado === "exito" ? (
-        <Button onClick={reset} className="w-full" size="lg">
-          Nueva Receta
-        </Button>
-      ) : (
-        <Button
-          onClick={handleEnviar}
-          disabled={!puedeEnviar || enProceso}
-          className="w-full bg-primary hover:bg-primary/90"
-          size="lg"
-        >
-          {enProceso ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Enviando...
-            </>
-          ) : (
-            <>
-              <Send className="mr-2 h-4 w-4" />
-              Enviar Link de Pago
-            </>
-          )}
-        </Button>
-      )}
-
+      <Button
+        onClick={handleEnviar}
+        disabled={!puedeEnviar || enProceso}
+        className="w-full bg-primary hover:bg-primary/90"
+        size="lg"
+      >
+        {enProceso ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Enviando...
+          </>
+        ) : (
+          <>
+            <Send className="mr-2 h-4 w-4" />
+            Enviar Link de Pago
+          </>
+        )}
+      </Button>
     </div>
   )
 }
