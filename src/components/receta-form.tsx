@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef } from "react"
+import { useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Send, Loader2, CheckCircle2, AlertCircle, FilePlus2 } from "lucide-react"
 import { AsYouType } from "libphonenumber-js"
@@ -29,9 +29,13 @@ export function RecetaForm({ initialMonto }: { initialMonto: number }) {
     reset,
   } = useRecetaForm(initialMonto)
 
+  // Refresh historial as soon as receta is sent successfully
+  useEffect(() => {
+    if (estado === "exito") router.refresh()
+  }, [estado, router])
+
   function handleReset() {
     reset()
-    router.refresh()
   }
 
   // Estado de éxito — mostrar solo el mensaje y botón de nueva receta
