@@ -25,9 +25,9 @@ export async function DashboardData() {
 
   return (
     <div className='min-h-screen bg-background'>
-      <DashboardNavbar userName={session.user.name} />
+      <DashboardNavbar userName={session.user.name} userImage={user.image} userSpecialty={user.specialty} />
 
-      <main className='mx-auto w-full max-w-6xl px-4 pt-18 pb-12'>
+      <main className='mx-auto w-full max-w-6xl px-4 pt-28 pb-12'>
         {/* Hero */}
         <div className='mb-5'>
           <h1 className='text-2xl font-bold tracking-tight text-foreground sm:text-3xl'>
