@@ -46,6 +46,7 @@ export async function sendRecetaAction(
     doctorId: user.id,
     pdfKey,
     pdfUrl,
+    pdfName: pdfFile.name,
     patientPhone: `54${patientPhone}`,
     amount,
   });

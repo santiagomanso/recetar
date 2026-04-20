@@ -5,6 +5,7 @@ export async function createDelivery(data: {
   doctorId: string;
   pdfKey: string;
   pdfUrl: string;
+  pdfName?: string;
   patientPhone: string;
   amount: number;
   mpPreferenceId?: string;
@@ -15,6 +16,7 @@ export async function createDelivery(data: {
       type: "PRESCRIPTION",
       pdfKey: data.pdfKey,
       pdfUrl: data.pdfUrl,
+      pdfName: data.pdfName,
       patientPhone: data.patientPhone,
       amount: data.amount,
       mpPreferenceId: data.mpPreferenceId,

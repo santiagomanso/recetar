@@ -46,6 +46,7 @@ model Delivery {
   type           DeliveryType
   pdfUrl         String
   pdfKey         String
+  pdfName        String?
   patientPhone   String
   amount         Decimal         @db.Decimal(10, 2)
   status         DeliveryStatus  @default(PENDING_PAYMENT)
