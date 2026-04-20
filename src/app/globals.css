@@ -70,9 +70,9 @@
   --muted:            oklch(0.961 0.007 255.584); /* #f1f5f9 */
   --muted-foreground: oklch(0.554 0.046 257.417); /* #64748b slate-500 */
 
-  /* Accent — amber-500 (IGUAL en light y dark) */
-  --accent:            oklch(0.769 0.188 70.08);  /* #f59e0b */
-  --accent-foreground: oklch(1 0 0);
+  /* Accent — slate-100 (hover states en shadcn; amber quedó en --warning) */
+  --accent:            oklch(0.961 0.007 255.584); /* #f1f5f9 slate-100 */
+  --accent-foreground: oklch(0.372 0.044 257.287); /* #334155 slate-700 */
 
   /* Bordes */
   --border: oklch(0.882 0.019 254.128); /* #cbd5e1 slate-300 — visible sobre bg */
@@ -132,9 +132,9 @@
   --muted:            oklch(0.372 0.044 257.287); /* #334155 */
   --muted-foreground: oklch(0.704 0.04 256.788);  /* #94a3b8 */
 
-  /* Accent — amber-500 IGUAL que light (decisión de diseño) */
-  --accent:            oklch(0.769 0.188 70.08);  /* #f59e0b — NO CAMBIAR */
-  --accent-foreground: oklch(1 0 0);
+  /* Accent — slate-700 (hover states en shadcn; amber quedó en --warning) */
+  --accent:            oklch(0.372 0.044 257.287); /* #334155 slate-700 */
+  --accent-foreground: oklch(0.961 0.007 255.584); /* #f1f5f9 */
 
   /* Bordes */
   --border: oklch(0.372 0.044 257.287); /* #334155 */
