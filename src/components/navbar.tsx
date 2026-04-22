@@ -3,181 +3,260 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
+import { motion } from "framer-motion";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { FileText, Menu, X, LogOut } from "lucide-react";
+import { House, Menu, LogOut, LayoutDashboard, Zap, Play, Tag, Send, Settings, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ThemeToggle, ThemeToggleMobile } from "@/components/theme-toggle";
+
+type NavLink = { href: string; label: string; icon: LucideIcon };
+
+const publicLinks: NavLink[] = [
+  { href: "/#features", label: "Funcionalidades", icon: Zap },
+  { href: "/#como-funciona", label: "Cómo Funciona", icon: Play },
+  { href: "/#pricing", label: "Precios", icon: Tag },
+];
+
+const authLinks: NavLink[] = [
+  { href: "/dashboard", label: "Enviar Receta", icon: Send },
+  { href: "/configuracion", label: "Configuración", icon: Settings },
+];
 
 export function Navbar() {
   const { data: session } = useSession();
-  const isAuthenticated = !!session?.user;
+  const [mounted, setMounted] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [hoveredLink, setHoveredLink] = useState<string | null>(null);
+
+  // Defer auth-dependent rendering to avoid SSR/client hydration mismatch
+  const isAuthenticated = mounted && !!session?.user;
+  const navLinks = isAuthenticated
+    ? [...publicLinks, ...authLinks]
+    : publicLinks;
 
   useEffect(() => {
+    setMounted(true);
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  return (
-    <header
-      className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
-        isScrolled
-          ? "bg-background/80 backdrop-blur-lg border-b border-border shadow-sm"
-          : "bg-transparent",
-      )}
-    >
-      <nav className='mx-auto flex h-16 max-w-6xl items-center justify-between px-4'>
-        <Link
-          href='/'
-          className='flex items-center gap-2 transition-transform duration-300 hover:scale-105'
-        >
-          <div className='flex h-9 w-9 items-center justify-center rounded-lg bg-primary transition-all duration-300 hover:shadow-lg'>
-            <FileText className='h-5 w-5 text-primary-foreground' />
-          </div>
-          <span className='text-lg font-bold text-foreground'>Recetar</span>
-        </Link>
+  const userName = session?.user?.name;
+  const userImage = session?.user?.image;
 
-        {/* Desktop Navigation */}
-        <div className='hidden items-center gap-8 md:flex'>
-          <Link
-            href='/#features'
-            className='text-sm font-medium text-muted-foreground transition-colors duration-300 hover:text-foreground'
-          >
-            Funcionalidades
-          </Link>
-          <Link
-            href='/#como-funciona'
-            className='text-sm font-medium text-muted-foreground transition-colors duration-300 hover:text-foreground'
-          >
-            Cómo Funciona
-          </Link>
-          <Link
-            href='/#pricing'
-            className='text-sm font-medium text-muted-foreground transition-colors duration-300 hover:text-foreground'
-          >
-            Precios
-          </Link>
-        </div>
+  const initials = userName
+    ?.split(" ")
+    .map((n) => n[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
 
-        <div className='hidden items-center gap-3 md:flex'>
-          {isAuthenticated ? (
-            <>
-              <Link href='/dashboard'>
-                <Button
-                  variant='ghost'
-                  className='font-medium text-muted-foreground'
-                >
-                  Enviar Receta
-                </Button>
-              </Link>
-              <Button
-                variant='outline'
-                size='sm'
-                onClick={() => signOut({ callbackUrl: "/" })}
-                className='gap-2'
-              >
-                <LogOut className='h-4 w-4' />
-                Salir
-              </Button>
-            </>
-          ) : (
-            <>
-              <Link href='/login'>
-                <Button variant='ghost' className='font-medium'>
-                  Iniciar sesión
-                </Button>
-              </Link>
-              <Link href='/register'>
-                <Button className='rounded-full px-6 font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg'>
-                  Comenzar gratis
-                </Button>
-              </Link>
-            </>
-          )}
-        </div>
-
-        {/* Mobile Menu Button */}
-        <button
-          className='flex h-10 w-10 items-center justify-center rounded-lg transition-colors hover:bg-muted md:hidden'
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        >
-          {isMobileMenuOpen ? (
-            <X className='h-5 w-5' />
-          ) : (
-            <Menu className='h-5 w-5' />
-          )}
-        </button>
-      </nav>
-
-      {/* Mobile Menu */}
+  const AvatarCircle = ({ size }: { size: "sm" | "lg" }) => {
+    const sm = size === "sm";
+    return userImage ? (
+      <img
+        src={userImage}
+        alt={userName ?? ""}
+        className={cn(
+          "rounded-full object-cover",
+          sm ? "h-9 w-9" : "h-20 w-20",
+        )}
+      />
+    ) : (
       <div
         className={cn(
-          "absolute left-0 right-0 top-16 overflow-hidden bg-background/95 backdrop-blur-lg transition-all duration-300 md:hidden",
-          isMobileMenuOpen ? "max-h-96 border-b border-border" : "max-h-0",
+          "flex items-center justify-center rounded-full bg-muted font-semibold text-muted-foreground",
+          sm ? "h-9 w-9 text-xs" : "h-20 w-20 text-2xl",
         )}
       >
-        <div className='flex flex-col gap-4 px-4 py-6'>
+        {initials}
+      </div>
+    );
+  };
+
+  return (
+    <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+      <header
+        className={cn(
+          "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
+          isScrolled
+            ? "bg-background/80 backdrop-blur-lg border-b border-border shadow-sm"
+            : "bg-transparent",
+        )}
+      >
+        <nav className='mx-auto flex h-16 max-w-6xl items-center px-4'>
+          {/* ── Mobile: House | RECETAR | hamburger ── */}
+          <div className='flex md:hidden items-center w-full'>
+            <Link
+              href='/'
+              className='shrink-0 flex items-center justify-center h-9 w-9 rounded-lg hover:bg-muted transition-colors'
+            >
+              <House className='h-5 w-5 text-foreground' />
+            </Link>
+            <span
+              className='flex-1 text-center text-sm font-semibold tracking-[0.18em] uppercase text-foreground select-none px-3 truncate'
+              style={{ fontFamily: "var(--font-space-mono)" }}
+            >
+              Recetar
+            </span>
+            <SheetTrigger asChild>
+              <button
+                className='shrink-0 flex h-9 w-9 items-center justify-center rounded-lg transition-colors hover:bg-muted'
+                aria-label='Abrir menú'
+              >
+                <Menu className='h-5 w-5' />
+              </button>
+            </SheetTrigger>
+          </div>
+
+          {/* ── Desktop: Logo ── */}
           <Link
-            href='/#features'
-            className='text-sm font-medium text-muted-foreground transition-colors hover:text-foreground'
-            onClick={() => setIsMobileMenuOpen(false)}
+            href='/'
+            className='hidden md:flex items-center gap-2 transition-transform duration-300 hover:scale-105'
           >
-            Funcionalidades
+            <House className='h-5 w-5 text-foreground' />
+            <span className='text-lg font-medium text-foreground'>Recetar</span>
           </Link>
-          <Link
-            href='/#como-funciona'
-            className='text-sm font-medium text-muted-foreground transition-colors hover:text-foreground'
-            onClick={() => setIsMobileMenuOpen(false)}
+
+          {/* ── Desktop: Nav links with animated pill ── */}
+          <div
+            className='hidden md:flex items-center gap-1 mx-auto'
+            onMouseLeave={() => setHoveredLink(null)}
           >
-            Cómo Funciona
-          </Link>
-          <Link
-            href='/#pricing'
-            className='text-sm font-medium text-muted-foreground transition-colors hover:text-foreground'
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            Precios
-          </Link>
-          <div className='flex flex-col gap-2 pt-4 border-t border-border'>
+            {navLinks.map(({ href, label }) => (
+              <Link
+                key={href}
+                href={href}
+                className='relative px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-lg'
+                onMouseEnter={() => setHoveredLink(href)}
+              >
+                {hoveredLink === href && (
+                  <motion.div
+                    layoutId='landing-nav-pill'
+                    className='absolute inset-0 rounded-lg bg-muted'
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.35 }}
+                  />
+                )}
+                <span className='relative z-10'>{label}</span>
+              </Link>
+            ))}
+          </div>
+
+          {/* ── Desktop: Right side ── */}
+          <div className='hidden md:flex items-center gap-3 ml-auto'>
+            <ThemeToggle />
             {isAuthenticated ? (
-              <>
-                <Link
-                  href='/dashboard'
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <Button variant='outline' className='w-full'>
-                    Dashboard
-                  </Button>
-                </Link>
-                <Button
-                  variant='ghost'
-                  onClick={() => signOut({ callbackUrl: "/" })}
-                  className='w-full gap-2'
-                >
-                  <LogOut className='h-4 w-4' />
-                  Cerrar sesión
-                </Button>
-              </>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    className='rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2'
+                    aria-label='Menú de cuenta'
+                  >
+                    <AvatarCircle size='sm' />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align='end' className='w-48'>
+                  <DropdownMenuItem asChild>
+                    <Link
+                      href='/dashboard'
+                      className='flex items-center gap-2 cursor-pointer'
+                    >
+                      <LayoutDashboard className='h-4 w-4' />
+                      Panel de control
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={() => signOut({ callbackUrl: "/" })}
+                    className='flex items-center gap-2 cursor-pointer'
+                  >
+                    <LogOut className='h-4 w-4' />
+                    Cerrar sesión
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
-              <>
-                <Link href='/login' onClick={() => setIsMobileMenuOpen(false)}>
-                  <Button variant='outline' className='w-full'>
-                    Iniciar sesión
-                  </Button>
-                </Link>
-                <Link
-                  href='/register'
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <Button className='w-full'>Comenzar gratis</Button>
-                </Link>
-              </>
+              <Link href='/login'>
+                <Button className='rounded-full px-6 font-medium text-sm transition-all duration-300 hover:scale-105 hover:shadow-lg'>
+                  Enviar recetas
+                </Button>
+              </Link>
             )}
           </div>
+        </nav>
+      </header>
+
+      {/* ── Mobile Sheet ── */}
+      <SheetContent side='right' className='w-72 flex flex-col p-0'>
+        <SheetTitle className='sr-only'>Menú</SheetTitle>
+        {isAuthenticated && (
+          <div className='flex flex-col items-center gap-3 border-b border-border px-6 py-8'>
+            <AvatarCircle size='lg' />
+            <p className='text-sm font-bold text-foreground'>
+              {userName ?? "Mi cuenta"}
+            </p>
+          </div>
+        )}
+        <nav className='flex flex-col gap-1 px-3 py-4 flex-1'>
+          {navLinks.map(({ href, label, icon: Icon }) => (
+            <Link
+              key={href}
+              href={href}
+              onClick={() => setSheetOpen(false)}
+              className='flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors'
+            >
+              <Icon className='h-4 w-4 shrink-0' />
+              {label}
+            </Link>
+          ))}
+          {isAuthenticated && (
+            <Link
+              href='/dashboard'
+              onClick={() => setSheetOpen(false)}
+              className='flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors'
+            >
+              <LayoutDashboard className='h-4 w-4' />
+              Dashboard
+            </Link>
+          )}
+        </nav>
+        <div className='border-t border-border px-3 py-4 flex flex-col gap-1'>
+          <ThemeToggleMobile />
+          {isAuthenticated ? (
+            <button
+              onClick={() => signOut({ callbackUrl: "/" })}
+              className='flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground'
+            >
+              <LogOut className='h-4 w-4' />
+              Cerrar sesión
+            </button>
+          ) : (
+            <>
+              <Link
+                href='/login'
+                onClick={() => setSheetOpen(false)}
+                className='flex w-full items-center justify-center rounded-lg px-3 py-2.5 text-sm font-medium bg-primary text-primary-foreground transition-colors hover:bg-primary/90'
+              >
+                Enviar recetas
+              </Link>
+            </>
+          )}
         </div>
-      </div>
-    </header>
+      </SheetContent>
+    </Sheet>
   );
 }
