@@ -1,7 +1,6 @@
 "use client"
 
 import { useRef, useEffect } from "react"
-import { useRouter } from "next/navigation"
 import { Send, Loader2, CheckCircle2, AlertCircle, FilePlus2 } from "lucide-react"
 import { AsYouType } from "libphonenumber-js"
 import { Button } from "@/components/ui/button"
@@ -9,9 +8,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { PDFUpload } from "./pdf-upload"
 import { useRecetaForm } from "@/app/dashboard/_hooks/use-receta-form"
+import { useDashboardRefresh } from "@/app/dashboard/_components/dashboard-refresh-context"
 
 export function RecetaForm({ initialMonto }: { initialMonto: number }) {
-  const router = useRouter()
+  const { markSending, refresh } = useDashboardRefresh()
   const phoneFormatter = useRef(new AsYouType("AR"))
 
   const {
@@ -29,10 +29,10 @@ export function RecetaForm({ initialMonto }: { initialMonto: number }) {
     reset,
   } = useRecetaForm(initialMonto)
 
-  // Refresh historial as soon as receta is sent successfully
   useEffect(() => {
-    if (estado === "exito") router.refresh()
-  }, [estado, router])
+    if (estado === "enviando") markSending()  // skeleton aparece al click
+    if (estado === "exito") refresh()         // refresh DB cuando termina
+  }, [estado, markSending, refresh])
 
   function handleReset() {
     reset()
@@ -70,7 +70,7 @@ export function RecetaForm({ initialMonto }: { initialMonto: number }) {
           <PDFUpload onFileSelect={setPdfFile} selectedFile={pdfFile} />
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-[11fr_9fr] lg:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="telefono" className="text-sm font-medium text-foreground">
               WhatsApp del Paciente
@@ -113,7 +113,7 @@ export function RecetaForm({ initialMonto }: { initialMonto: number }) {
                 placeholder="5000"
                 value={monto}
                 onChange={(e) => setMonto(e.target.value)}
-                className="w-full pl-16"
+                className="w-full pl-[4.5rem]"
                 disabled={enProceso}
               />
             </div>

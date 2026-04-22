@@ -1,4 +1,4 @@
-import { FileText, CheckCircle2, Clock, Send, AlertCircle } from "lucide-react"
+import { FileText, CheckCircle2, Clock, AlertCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { getDeliveriesByDoctor } from "@/services/deliveries"
 import { format, isToday, isYesterday } from "date-fns"
@@ -11,12 +11,12 @@ const statusConfig = {
     className: "bg-warning/10 text-warning-foreground border-warning/20",
   },
   PAID: {
-    label: "Pagada",
-    icon: <Send className="h-3.5 w-3.5" />,
-    className: "bg-primary/10 text-primary border-primary/20",
+    label: "Pagado",
+    icon: <CheckCircle2 className="h-3.5 w-3.5" />,
+    className: "bg-success/10 text-success border-success/20",
   },
   SENT: {
-    label: "Enviada",
+    label: "Pagado",
     icon: <CheckCircle2 className="h-3.5 w-3.5" />,
     className: "bg-success/10 text-success border-success/20",
   },
@@ -40,10 +40,11 @@ function formatPhone(phone: string): string {
 
 interface HistorialProps {
   doctorId: string
+  limit?: number
 }
 
-export async function Historial({ doctorId }: HistorialProps) {
-  const deliveries = await getDeliveriesByDoctor(doctorId)
+export async function Historial({ doctorId, limit }: HistorialProps) {
+  const deliveries = await getDeliveriesByDoctor(doctorId, limit)
 
   if (deliveries.length === 0) {
     return (
@@ -55,7 +56,7 @@ export async function Historial({ doctorId }: HistorialProps) {
   }
 
   return (
-    <div className="space-y-3">
+    <>
       {deliveries.map((delivery) => {
         const config = statusConfig[delivery.status]
         const displayName = delivery.pdfName ?? `receta-${delivery.id.slice(-6)}`
@@ -65,33 +66,33 @@ export async function Historial({ doctorId }: HistorialProps) {
         return (
           <div
             key={delivery.id}
-            className="flex items-center gap-4 rounded-lg border border-border bg-card p-4"
+            className="flex items-start gap-4 rounded-lg border border-border bg-card p-4"
           >
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
               <FileText className="h-5 w-5 text-primary" />
             </div>
-            <div className="min-w-0 flex-1">
+            {/* Grid: izq toma el espacio restante, der se ajusta a su contenido */}
+            <div className="min-w-0 flex-1 grid grid-cols-[1fr_auto] items-start gap-x-3 gap-y-1">
               <p className="truncate text-sm font-medium text-card-foreground">
                 {displayName}
               </p>
-              <p className="text-xs text-muted-foreground">
-                {phone} · ${amount.toLocaleString("es-AR")}
-              </p>
-            </div>
-            <div className="flex flex-col items-end gap-1.5">
               <span
                 className={cn(
-                  "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium",
+                  "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium whitespace-nowrap",
                   config.className
                 )}
               >
                 {config.icon}
                 {config.label}
               </span>
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-muted-foreground">
-                  {formatDate(delivery.createdAt)}
-                </span>
+
+              <p className="text-xs text-muted-foreground">{phone}</p>
+              <p className="text-xs text-muted-foreground text-right">
+                {formatDate(delivery.createdAt)}
+              </p>
+
+              <p className="text-xs text-muted-foreground">${amount.toLocaleString("es-AR")}</p>
+              <div className="flex justify-end">
                 {delivery.status === "PENDING_PAYMENT" && (
                   <ResendButton deliveryId={delivery.id} />
                 )}
@@ -100,6 +101,6 @@ export async function Historial({ doctorId }: HistorialProps) {
           </div>
         )
       })}
-    </div>
+    </>
   )
 }
