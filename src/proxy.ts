@@ -25,15 +25,14 @@ export default auth((req: NextRequest & { auth: any }) => {
   // Always allow webhooks (called by external services without session)
   if (isWebhookRoute) return NextResponse.next()
 
-  // Landing page: redirect logged-in users to dashboard/onboarding
+  // Landing page: only redirect if onboarding is not complete
   if (isPublicRoute) {
     if (isLoggedIn) {
-      const isAdminUser = session.user.email === process.env.ADMIN_EMAIL
-      if (isAdminUser) return NextResponse.redirect(new URL("/admin", nextUrl))
       const onboardingCompleted = session.user.onboardingCompleted
-      return NextResponse.redirect(
-        new URL(onboardingCompleted ? "/dashboard" : "/onboarding", nextUrl)
-      )
+      const isAdminUser = session.user.email === process.env.ADMIN_EMAIL
+      if (!isAdminUser && !onboardingCompleted) {
+        return NextResponse.redirect(new URL("/onboarding", nextUrl))
+      }
     }
     return NextResponse.next()
   }
@@ -44,10 +43,6 @@ export default auth((req: NextRequest & { auth: any }) => {
   // Auth routes (/login, /register)
   if (isAuthRoute) {
     if (isLoggedIn) {
-      const isAdminUser = session.user.email === process.env.ADMIN_EMAIL
-      if (isAdminUser) {
-        return NextResponse.redirect(new URL("/admin", nextUrl))
-      }
       const onboardingCompleted = session.user.onboardingCompleted
       return NextResponse.redirect(
         new URL(onboardingCompleted ? "/dashboard" : "/onboarding", nextUrl)

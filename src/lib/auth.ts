@@ -78,12 +78,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           const dbUser = await getUserByEmail(user.email!)
           token.id = dbUser?.id ?? (user.id as string)
           token.onboardingCompleted = dbUser?.onboardingCompleted ?? false
+          token.picture = dbUser?.image ?? user.image ?? null
         } else {
           // Credentials: authorize() returns our DB id and onboardingCompleted directly
           token.id = user.id as string
           token.onboardingCompleted = (
             user as { onboardingCompleted: boolean }
           ).onboardingCompleted ?? false
+          token.picture = (user as { image?: string | null }).image ?? null
         }
         // account.provider is 'credentials' or 'google' on fresh login
         token.lastAuthProvider = account?.provider ?? "credentials"

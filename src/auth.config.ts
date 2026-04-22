@@ -4,6 +4,16 @@ import { getUserByEmail } from "@/services/users"
 import { verifyPassword } from "@/services/auth"
 
 export default {
+  callbacks: {
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.id as string
+        session.user.onboardingCompleted = token.onboardingCompleted as boolean
+        session.user.lastAuthProvider = token.lastAuthProvider as string
+      }
+      return session
+    },
+  },
   providers: [
     Credentials({
       credentials: {
@@ -32,6 +42,7 @@ export default {
           id: user.id,
           name: user.name,
           email: user.email,
+          image: user.image,
           onboardingCompleted: user.onboardingCompleted,
         }
       },
