@@ -24,11 +24,16 @@ export async function createDelivery(data: {
   });
 }
 
-export async function getDeliveriesByDoctor(doctorId: string) {
+export async function hasDeliveries(doctorId: string) {
+  const count = await db.delivery.count({ where: { doctorId }, take: 1 })
+  return count > 0
+}
+
+export async function getDeliveriesByDoctor(doctorId: string, limit = 20) {
   return db.delivery.findMany({
     where: { doctorId },
     orderBy: { createdAt: "desc" },
-    take: 20,
+    take: limit,
   });
 }
 
