@@ -2,20 +2,22 @@
 
 import { Navbar } from "@/components/navbar"
 import {
-  HeroSection,
+  SplashSection,
   FeaturesSection,
+  HowItWorksSection,
   PricingSection,
   CTASection,
   Footer,
-} from "@/components/landing-sections"
+} from "./_components/landing-section"
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
       <main>
-        <HeroSection />
+        <SplashSection />
         <FeaturesSection />
+        <HowItWorksSection />
         <PricingSection />
         <CTASection />
       </main>
