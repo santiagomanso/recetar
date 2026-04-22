@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getPaymentById } from "@/services/mercadopago";
 import { getDeliveryWithDoctor, updateDeliveryStatus } from "@/services/deliveries";
 import { getUserByMpUserId } from "@/services/users";
@@ -70,6 +71,9 @@ export async function POST(request: NextRequest) {
 
     // 7. Marcar como SENT
     await updateDeliveryStatus(delivery.id, "SENT", { sentAt: new Date() });
+
+    // 8. Invalidar cache del dashboard del médico
+    revalidatePath("/dashboard");
 
     return NextResponse.json({ ok: true });
   } catch (error) {
