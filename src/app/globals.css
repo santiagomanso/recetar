@@ -147,7 +147,7 @@
   --success:                oklch(0.55 0.15 160);
   --success-foreground:     oklch(1 0 0);
   --warning:                oklch(0.769 0.188 70.08);
-  --warning-foreground:     oklch(0.13 0.028 261.692);
+  --warning-foreground:     oklch(0.88 0.14 70.08); /* bright amber text on dark bg */
 
   /* Charts */
   --chart-1: oklch(0.488 0.243 264.376);
@@ -227,4 +227,30 @@
   body {
     @apply overflow-x-hidden bg-background text-foreground;
   }
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 72px; /* h-16 navbar (64px) + 8px buffer */
+  }
+}
+
+/* ── SPLASH RING KEYFRAMES ───────────────────────────────────── */
+@keyframes ring-expand-1 {
+  from { width: 0; height: 0; opacity: 0; }
+  to   { width: 180px; height: 180px; opacity: 1; }
+}
+@keyframes ring-expand-2 {
+  from { width: 0; height: 0; opacity: 0; }
+  to   { width: 310px; height: 310px; opacity: 1; }
+}
+@keyframes ring-expand-3 {
+  from { width: 0; height: 0; opacity: 0; }
+  to   { width: 450px; height: 450px; opacity: 1; }
+}
+@keyframes ring-expand-4 {
+  from { width: 0; height: 0; opacity: 0; }
+  to   { width: 590px; height: 590px; opacity: 1; }
+}
+@keyframes ring-expand-5 {
+  from { width: 0; height: 0; opacity: 0; }
+  to   { width: 720px; height: 720px; opacity: 1; }
 }
