@@ -136,6 +136,14 @@
     }
   }
 
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+
   .animate-ring-1 {
     animation: ring-expand 2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }

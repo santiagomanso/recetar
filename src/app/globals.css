@@ -231,6 +231,15 @@
     scroll-behavior: smooth;
     scroll-padding-top: 72px; /* h-16 navbar (64px) + 8px buffer */
   }
+
+  /* Hide scrollbar everywhere */
+  * {
+    scrollbar-width: none;        /* Firefox */
+    -ms-overflow-style: none;     /* IE / Edge */
+  }
+  *::-webkit-scrollbar {
+    display: none;                /* Chrome / Safari / WebKit */
+  }
 }
 
 /* ── SPLASH RING KEYFRAMES ───────────────────────────────────── */
