@@ -39,7 +39,7 @@ export function HowItWorksSection() {
     <section
       ref={ref}
       id="como-funciona"
-      className="h-svh flex flex-col bg-muted/30"
+      className="relative h-[calc(100svh-4rem)] flex flex-col bg-muted/30"
     >
       <SectionArrow targetId="features" direction="up" />
 

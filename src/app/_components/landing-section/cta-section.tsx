@@ -15,7 +15,7 @@ export function CTASection() {
     <section
       ref={ref}
       id="cta"
-      className="relative h-svh flex flex-col bg-primary overflow-hidden"
+      className="relative h-[calc(100svh-4rem)] flex flex-col bg-primary overflow-hidden"
     >
       <SectionArrow targetId="pricing" direction="up" />
 

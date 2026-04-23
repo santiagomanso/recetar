@@ -56,7 +56,7 @@ export function FeaturesSection() {
   const isInView = useInView(ref, { once: true, amount: 0.15 });
 
   return (
-    <section ref={ref} id="features" className="h-svh flex flex-col">
+    <section ref={ref} id="features" className="relative h-[calc(100svh-4rem)] flex flex-col">
       <SectionArrow targetId="splash" direction="up" />
 
       <div className="flex flex-1 min-h-0 flex-col justify-center overflow-hidden py-4">

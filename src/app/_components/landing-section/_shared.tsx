@@ -4,6 +4,17 @@ import { motion } from "framer-motion";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+/* ─── Scroll helper ─────────────────────────────────────────── */
+
+export function scrollToSection(id: string) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  window.scrollTo({
+    top: el.getBoundingClientRect().top + window.scrollY - 64,
+    behavior: "smooth",
+  });
+}
+
 /* ─── SectionArrow ───────────────────────────────────────────── */
 
 export function SectionArrow({
@@ -17,16 +28,12 @@ export function SectionArrow({
   return (
     <motion.button
       className={cn(
-        "shrink-0 flex w-full items-center justify-center cursor-pointer z-10",
-        direction === "down" ? "h-14 pb-2" : "h-10 mt-16",
+        "absolute left-1/2 -translate-x-1/2 z-10 cursor-pointer flex items-center justify-center",
+        direction === "up" ? "top-8" : "bottom-8",
       )}
       animate={{ y: direction === "down" ? [0, 5, 0] : [0, -5, 0] }}
       transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-      onClick={() =>
-        document
-          .getElementById(targetId)
-          ?.scrollIntoView({ behavior: "smooth" })
-      }
+      onClick={() => scrollToSection(targetId)}
       aria-label={direction === "up" ? "Sección anterior" : "Sección siguiente"}
     >
       <Icon size={22} strokeWidth={1.5} className="text-muted-foreground/40" />

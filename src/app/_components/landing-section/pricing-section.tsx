@@ -21,7 +21,7 @@ export function PricingSection() {
   const isInView = useInView(ref, { once: true, amount: 0.25 });
 
   return (
-    <section ref={ref} id="pricing" className="h-svh flex flex-col">
+    <section ref={ref} id="pricing" className="relative h-[calc(100svh-4rem)] flex flex-col">
       <SectionArrow targetId="como-funciona" direction="up" />
 
       <div className="flex flex-1 min-h-0 flex-col justify-center overflow-hidden py-6 px-4">

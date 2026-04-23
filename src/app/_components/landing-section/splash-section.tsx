@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { FileText, ArrowRight, ChevronDown } from "lucide-react";
+import { scrollToSection } from "./_shared";
 
 /* ─── Timing constants ───────────────── */
 
@@ -171,7 +172,10 @@ function TypewriterText() {
 
 export function SplashSection() {
   return (
-    <section id='splash' className='relative h-svh flex flex-col items-center justify-center overflow-hidden bg-background'>
+    <section
+      id='splash'
+      className='relative h-[calc(100svh-4rem)] flex flex-col items-center justify-center overflow-hidden bg-background'
+    >
       <div className='pointer-events-none absolute inset-0 flex items-center justify-center'>
         <div className='h-128 w-lg rounded-full bg-primary/5 blur-3xl' />
       </div>
@@ -179,7 +183,7 @@ export function SplashSection() {
       <EcgLine />
 
       <motion.div
-        className='relative z-10 flex flex-col items-center gap-5 text-center px-4 pt-20 sm:pt-0'
+        className='relative z-10 flex flex-col items-center gap-5 text-center px-4'
         initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{
@@ -216,7 +220,7 @@ export function SplashSection() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: ECG_FINISH + 0.4 }}
-        onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
+        onClick={() => scrollToSection("features")}
         aria-label='Ver más'
       >
         <motion.div

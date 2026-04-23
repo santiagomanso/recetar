@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { Navbar } from "@/components/navbar"
+import { Navbar } from "@/components/navbar";
 import {
   SplashSection,
   FeaturesSection,
@@ -8,13 +8,13 @@ import {
   PricingSection,
   CTASection,
   Footer,
-} from "./_components/landing-section"
+} from "./_components/landing-section";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className='min-h-screen bg-background scrollbar-none'>
       <Navbar />
-      <main>
+      <main className='pt-16'>
         <SplashSection />
         <FeaturesSection />
         <HowItWorksSection />
@@ -23,5 +23,5 @@ export default function Home() {
       </main>
       <Footer />
     </div>
-  )
+  );
 }
