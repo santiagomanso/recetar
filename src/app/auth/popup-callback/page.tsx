@@ -36,7 +36,10 @@ export default function PopupCallbackPage() {
         router.replace("/login?error=AccessDenied")
       }
     }
-  }, [status, router])
+    // router intentionally omitted — only needed for the fallback path,
+    // including it caused the effect to re-fire and send duplicate postMessages.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status])
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background">
