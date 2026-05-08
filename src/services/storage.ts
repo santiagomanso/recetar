@@ -16,7 +16,7 @@ export async function uploadPDF(
 
   const { error } = await supabase.storage
     .from(BUCKET)
-    .upload(key, file, { contentType: "application/pdf", upsert: false });
+    .upload(key, file, { contentType: "application/pdf", upsert: true });
 
   if (error) throw new Error(`Error subiendo PDF: ${error.message}`);
 

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { getPaymentById } from "@/services/mercadopago";
-import { getDeliveryWithDoctor, updateDeliveryStatus } from "@/services/deliveries";
+import { getDeliveryWithDoctor, getDeliveriesByPreferenceId, updateDeliveryStatus } from "@/services/deliveries";
 import { getUserByMpUserId } from "@/services/users";
 import { getSignedUrl } from "@/services/storage";
 import { sendPrescription } from "@/services/whatsapp";
@@ -47,32 +47,45 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: true });
     }
 
-    // 3. Buscar la delivery con el médico
-    const delivery = await getDeliveryWithDoctor(deliveryId);
-    if (!delivery || delivery.status !== "PENDING_PAYMENT") {
+    // 3. Buscar el delivery primario para obtener el mpPreferenceId
+    const primaryDelivery = await getDeliveryWithDoctor(deliveryId);
+    if (!primaryDelivery || primaryDelivery.status !== "PENDING_PAYMENT") {
       return NextResponse.json({ ok: true });
     }
 
-    // 4. Marcar como PAID
-    await updateDeliveryStatus(delivery.id, "PAID", {
-      mpPaymentId: paymentId,
-      paidAt: new Date(),
-    });
+    // 4. Obtener TODOS los deliveries del mismo batch (misma preferencia MP)
+    const allDeliveries = primaryDelivery.mpPreferenceId
+      ? await getDeliveriesByPreferenceId(primaryDelivery.mpPreferenceId)
+      : [primaryDelivery];
 
-    // 5. Generar URL firmada del PDF (válida 1 hora)
-    const pdfUrl = await getSignedUrl(delivery.pdfKey, 60 * 60);
-
-    // 6. Enviar receta por WhatsApp
-    await sendPrescription(
-      delivery.patientPhone,
-      delivery.doctor.name,
-      pdfUrl
+    const pendingDeliveries = allDeliveries.filter(
+      (d) => d.status === "PENDING_PAYMENT"
     );
 
-    // 7. Marcar como SENT
-    await updateDeliveryStatus(delivery.id, "SENT", { sentAt: new Date() });
+    // 5. Marcar todos como PAID
+    await Promise.all(
+      pendingDeliveries.map((d) =>
+        updateDeliveryStatus(d.id, "PAID", {
+          mpPaymentId: paymentId,
+          paidAt: new Date(),
+        })
+      )
+    );
 
-    // 8. Invalidar cache del dashboard del médico
+    // 6. Enviar cada receta por WhatsApp y marcar como SENT
+    await Promise.all(
+      pendingDeliveries.map(async (d) => {
+        const pdfUrl = await getSignedUrl(d.pdfKey, 60 * 60);
+        await sendPrescription(
+          d.patientPhone,
+          primaryDelivery.doctor.name,
+          pdfUrl
+        );
+        await updateDeliveryStatus(d.id, "SENT", { sentAt: new Date() });
+      })
+    );
+
+    // 7. Invalidar cache del dashboard del médico
     revalidatePath("/dashboard");
 
     return NextResponse.json({ ok: true });

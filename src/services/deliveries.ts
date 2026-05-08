@@ -52,6 +52,13 @@ export async function getDeliveryByPreferenceId(mpPreferenceId: string) {
   return db.delivery.findFirst({ where: { mpPreferenceId } });
 }
 
+export async function getDeliveriesByPreferenceId(mpPreferenceId: string) {
+  return db.delivery.findMany({
+    where: { mpPreferenceId },
+    include: { doctor: true },
+  });
+}
+
 export async function updateDeliveryPreferenceId(
   id: string,
   mpPreferenceId: string
