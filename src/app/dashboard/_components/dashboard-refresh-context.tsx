@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useCallback, useContext, useEffect, useState, useTransition } from "react"
+import { createContext, useCallback, useContext, useEffect, useRef, useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 import { HistorialSkeleton } from "@/app/dashboard/_components/historial-skeleton"
 
@@ -20,29 +20,38 @@ const Context = createContext<RefreshCtx>({
 
 export function DashboardRefreshProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter()
+  const routerRef = useRef(router)
+  routerRef.current = router  // always up-to-date without being a dep
+
   const [isPending, startTransition] = useTransition()
   const [isSending, setIsSending] = useState(false)
 
   // Called immediately when the doctor clicks "Enviar" — before server action completes
   const markSending = useCallback(() => setIsSending(true), [])
 
-  // Called after server action succeeds — triggers router refresh
+  // Called after server action succeeds — triggers router refresh.
+  // Uses routerRef so this function stays stable even if router identity changes.
   const refresh = useCallback(() => {
     setIsSending(false)
-    startTransition(() => { router.refresh() })
-  }, [router])
+    startTransition(() => { routerRef.current.refresh() })
+  }, [])
 
-  // Refresh when doctor comes back to the tab.
-  // The webhook calls revalidatePath("/dashboard"), so the cache is already stale.
+  // Mirror isPending into a ref so the visibilitychange closure (registered once)
+  // always sees the current value without being in its dependency array.
+  const isPendingRef = useRef(false)
+  isPendingRef.current = isPending
+
+  // Refresh when doctor comes back to the tab. Guard against re-entrant calls:
+  // if a transition is already pending, skip until it finishes.
   useEffect(() => {
     function handleVisibility() {
-      if (document.visibilityState === "visible") {
-        startTransition(() => { router.refresh() })
+      if (document.visibilityState === "visible" && !isPendingRef.current) {
+        startTransition(() => { routerRef.current.refresh() })
       }
     }
     document.addEventListener("visibilitychange", handleVisibility)
     return () => document.removeEventListener("visibilitychange", handleVisibility)
-  }, [router])
+  }, [])
 
   return (
     <Context.Provider value={{ markSending, refresh, isSending, isPending }}>

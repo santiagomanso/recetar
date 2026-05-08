@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { DashboardNavbar } from "@/app/dashboard/_components/dashboard-navbar";
-import { RecetaForm } from "@/components/receta-form";
+import { MultiRecetaForm } from "@/app/dashboard/_components/multi-receta-form";
 import { Historial } from "@/app/dashboard/_components/historial";
 import { HistorialSkeleton } from "@/app/dashboard/_components/historial-skeleton";
 import {
@@ -65,7 +65,7 @@ export async function DashboardData() {
                   <FileText className='h-5 w-5' />
                   Nueva Receta
                 </h3>
-                <RecetaForm initialMonto={defaultAmount ?? 5000} />
+                <MultiRecetaForm initialMonto={defaultAmount ?? 5000} />
               </div>
             </div>
 
